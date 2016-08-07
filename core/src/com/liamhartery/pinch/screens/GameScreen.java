@@ -1,4 +1,4 @@
-package com.liamhartery.pinch;
+package com.liamhartery.pinch.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -7,8 +7,13 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.liamhartery.pinch.PinchGame;
 import com.liamhartery.pinch.entities.Player;
 
 //TODO Implement .tmx map files
@@ -18,6 +23,9 @@ public class GameScreen implements Screen,GestureListener {
     private String message = "";
     Texture playerImage;
     Player player;
+
+    TiledMap tiledMap;
+    TiledMapRenderer tiledMapRenderer;
 
     OrthographicCamera camera;
 
@@ -32,9 +40,13 @@ public class GameScreen implements Screen,GestureListener {
 
         // create camera
         camera = new OrthographicCamera();
-        camera.setToOrtho(false,800,480);
+        camera.setToOrtho(false,320,180);
 
-        // create a Rectangle to logically represent Player
+        //Load the map
+        tiledMap = new TmxMapLoader().load("levels/testlevel2/level2.tmx");
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
+        // create a new Player object for the player using the playerImage
         player = new Player(playerImage);
         player.setPosition(200,200);
 
@@ -48,10 +60,20 @@ public class GameScreen implements Screen,GestureListener {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Camera needs to be told to update
+        if(player.getXDistance(camera.viewportWidth)<=16){
+            camera.position.add(1,0,0);
+        }
+        if(player.getXDistance(0)>=-16){
+            camera.position.add(-1,0,0);
+        }
         camera.update();
 
         // Set the sprite batch to render using the camera's coordinates
         game.batch.setProjectionMatrix(camera.combined);
+
+        // Render the map
+        tiledMapRenderer.setView(camera);
+        tiledMapRenderer.render();
 
         // Sprite Batch
         game.batch.begin();

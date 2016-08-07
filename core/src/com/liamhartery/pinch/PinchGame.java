@@ -18,7 +18,7 @@ public class PinchGame extends Game {
 		bigfont.getData().setScale(3,3);
 
 		// Change screens to the menu screen
-		this.setScreen(new MainMenuScreen(this));
+		this.setScreen(new com.liamhartery.pinch.screens.MainMenuScreen(this));
 	}
 
 	@Override

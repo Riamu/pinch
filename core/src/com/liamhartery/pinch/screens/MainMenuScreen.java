@@ -1,10 +1,11 @@
-package com.liamhartery.pinch;
+package com.liamhartery.pinch.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.liamhartery.pinch.*;
 
 public class MainMenuScreen implements Screen{
     final PinchGame game;

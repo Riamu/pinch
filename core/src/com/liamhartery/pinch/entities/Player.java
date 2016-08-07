@@ -8,7 +8,7 @@ import com.badlogic.gdx.math.Vector3;
 public class Player extends Sprite {
     Vector3 pos = new Vector3();
     Vector3 dir = new Vector3();
-    float speed = 100;
+    float speed = 200;
     float distance;
 
     public Player(Texture texture){
@@ -31,5 +31,13 @@ public class Player extends Sprite {
         pos.set(pos.x+=dir.x*delta*speed,pos.y+=dir.y*delta*speed,0);
         setX(pos.x);
         setY(pos.y);
+    }
+    public float getXDistance(float x){
+        float distance = x-getX();
+        return distance;
+    }
+    public float getYDistance(float y){
+        float distance = getY()-y;
+        return distance;
     }
 }

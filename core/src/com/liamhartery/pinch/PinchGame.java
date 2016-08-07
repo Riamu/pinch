@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 // this is a silly commend pushed directly to master and should probably be deleted
+// "commend"... it's comment you idiot
 
 public class PinchGame extends Game {
 	public SpriteBatch batch;

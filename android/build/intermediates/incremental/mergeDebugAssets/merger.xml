@@ -1,2 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<merger version="3"><dataSet config="main"><source path="G:\workspace\pinch\android\assets"><file name="player.jpg" path="G:\workspace\pinch\android\assets\player.jpg"/></source><source path="G:\workspace\pinch\android\build\generated\assets\shaders\debug"/></dataSet><dataSet config="debug"><source path="G:\workspace\pinch\android\src\debug\assets"/></dataSet></merger>

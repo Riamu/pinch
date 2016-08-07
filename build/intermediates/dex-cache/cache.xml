@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="G:\workspace\pinch\android\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="402e1483fe741f22fcc86a8a6fcca7630551b18a">
+        <dex dex="G:\workspace\pinch\android\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_cb08ad164b9e0dedf3c509dc8e81de0beeb27b53\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\liamh\.gradle\caches\modules-2\files-2.1\com.badlogicgames.gdx\gdx\1.9.3\1a3775429980a6c8da0cdefb656ad1dabf91d629\gdx-1.9.3.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="1a3775429980a6c8da0cdefb656ad1dabf91d629">
+        <dex dex="G:\workspace\pinch\android\build\intermediates\transforms\dex\debug\folders\1000\10\gdx-1.9.3_42f3a5a6bbbec5256cc41f0215c39e8fabc9395c\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\liamh\.gradle\caches\modules-2\files-2.1\com.badlogicgames.gdx\gdx-backend-android\1.9.3\c45573bf68b55442990936f007e7d6823d259c1f\gdx-backend-android-1.9.3.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="c45573bf68b55442990936f007e7d6823d259c1f">
+        <dex dex="G:\workspace\pinch\android\build\intermediates\transforms\dex\debug\folders\1000\10\gdx-backend-android-1.9.3_ec7c0d6717bca9410129f7a866f5ecb65a8ec707\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\liamh\.gradle\caches\modules-2\files-2.1\com.badlogicgames.gdx\gdx-box2d\1.9.3\924800875b5ce70081021240a1301b60993b62e6\gdx-box2d-1.9.3.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="924800875b5ce70081021240a1301b60993b62e6">
+        <dex dex="G:\workspace\pinch\android\build\intermediates\transforms\dex\debug\folders\1000\10\gdx-box2d-1.9.3_4f818c1637bcde14e0fab908698818c8786a22ba\classes.dex" />
+    </item>
+    <item
+        jar="G:\workspace\pinch\android\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="3c3cedb88ffab6e64907c8ddadeed945a74e5bbd">
+        <dex dex="G:\workspace\pinch\android\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_4f7a823ff00b0259d0466220045da207211d92cf\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\liamh\.gradle\caches\modules-2\files-2.1\com.badlogicgames.gdx\gdx-freetype\1.9.3\dc44a8c15ce18fec8cdbdbd74bbb8bce3ccbba84\gdx-freetype-1.9.3.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="dc44a8c15ce18fec8cdbdbd74bbb8bce3ccbba84">
+        <dex dex="G:\workspace\pinch\android\build\intermediates\transforms\dex\debug\folders\1000\10\gdx-freetype-1.9.3_d4df93662d89b93711c28600cac52c07b3c5cb0d\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\liamh\.gradle\caches\modules-2\files-2.1\com.badlogicgames.box2dlights\box2dlights\1.4\3d77ad5b4164fb32fc67e2446e35911bb0aaf0bd\box2dlights-1.4.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="3d77ad5b4164fb32fc67e2446e35911bb0aaf0bd">
+        <dex dex="G:\workspace\pinch\android\build\intermediates\transforms\dex\debug\folders\1000\10\box2dlights-1.4_cdcbe7219a00a6722fabeeb9b3453203ce7be91b\classes.dex" />
+    </item>
+
+</items>

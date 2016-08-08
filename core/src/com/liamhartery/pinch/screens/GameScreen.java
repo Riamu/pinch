@@ -20,12 +20,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.liamhartery.pinch.PinchGame;
 import com.liamhartery.pinch.entities.Player;
 
-//TODO Implement .tmx map files
-    //TODO implement hit detection using .tmx files
+//TODO enable switching layers of the dungeon
+//TODO enable level loading
+//TODO create enemies
 public class GameScreen implements Screen,GestureListener {
     private final PinchGame game;
     private String message = "";
-    private int currentLayer = 0;
+    private int currentLayer = 1;
     private Texture playerImage;
     private TextureRegion playerRegion;
     private Player player;
@@ -65,6 +66,10 @@ public class GameScreen implements Screen,GestureListener {
         player = new Player(playerImage,(TiledMapTileLayer)tiledMap.getLayers().get(currentLayer));
         player.setPosition(100,100);
 
+        // reset the font size because our camera actually changed
+        game.font.getData().setScale(0.5f,0.5f);
+
+        // set the gesture detector and input processor to that gesture detector
         GestureDetector gd = new GestureDetector(this);
         Gdx.input.setInputProcessor(gd);
     }
@@ -86,8 +91,10 @@ public class GameScreen implements Screen,GestureListener {
 
         // Sprite Batch
         game.batch.begin();
-        //game.font.draw(game.batch,message,50,50);
-        game.batch.draw(playerImage,
+            // this line is basically for debug
+            game.font.draw(game.batch,message,5,160);
+            // we draw the player using it's midpoint instead of bottom left
+            game.batch.draw(playerImage,
                 player.getX()-player.getWidth()/2,
                 player.getY()-player.getWidth()/2);
         game.batch.end();

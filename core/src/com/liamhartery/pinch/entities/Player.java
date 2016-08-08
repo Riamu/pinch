@@ -23,8 +23,6 @@ public class Player extends Sprite {
         tileHeight = this.collisionLayer.getTileHeight();
     }
 
-    //TODO make the sprite collide with map stuff
-    //TODO adjust speed based on distance from point touched
     /*
     * This method acts as an update() method in a way, since the only time certain
     * checks have to be made is when the player actually moves, which will happen
@@ -35,6 +33,9 @@ public class Player extends Sprite {
         //TODO convert all to Vector2
         pos.set(getX(),getY(),0);
         distance = pos.dst(end);
+
+        // Speed is relative to how far away you touch. (for more precise control)
+        // We also cap the speed
         speed = distance*3;
         if(speed>100){
             speed = 100;
@@ -50,11 +51,7 @@ public class Player extends Sprite {
         // update the position
         pos.set(pos.x+=dir.x*delta*speed,pos.y+=dir.y*delta*speed,0);
 
-        /*
-        * Collision detection and position updates
-        * TODO figure which is more efficient ( |= OR if() )
-        */
-
+        // Collision detection using tiled map
         // if moving towards the left (negative x)
         if(dir.x<0){
             collisionX = collisionLayer.getCell(

@@ -18,17 +18,15 @@ public class MainMenuScreen implements Screen{
         The constructor in a Screen acts similarly to the create() method
         in libGDX
      */
+    @Override
+    public void dispose(){
+    }
     public MainMenuScreen(final PinchGame pinch){
         screenWidth = 800;
         screenHeight = 480;
         game = pinch;
         camera = new OrthographicCamera();
         camera.setToOrtho(false,screenWidth,screenHeight);
-
-        /*
-            this gives us some values so that we can center our fonts
-            TODO probably bad and I'll change this later
-        */
         bigLayout = new GlyphLayout(game.bigfont,"P I N C H");
         bigWidth = bigLayout.width;
         lilLayout = new GlyphLayout(game.font,"Touch to Begin");
@@ -49,17 +47,16 @@ public class MainMenuScreen implements Screen{
         game.batch.begin();
             game.bigfont.draw(game.batch, "P I N C H",(screenWidth-bigWidth)/2,280);
             game.font.draw(game.batch,"Touch to Begin",(screenWidth-lilWidth)/2,200);
+            // Credit to artists TODO remove this when new tileset found
+            // License: https://creativecommons.org/licenses/by/3.0/
+            game.font.draw(game.batch,"Tileset courtesy of Michele \"Buch\" Buccelli at http://opengameart.org/users/buch",20,50);
+            game.font.draw(game.batch,"Abram Connelly is the assets sponsor",20,20);
         game.batch.end();
 
         if(Gdx.input.isTouched()){
             game.setScreen(new GameScreen(game));
             dispose();
         }
-    }
-
-    @Override
-    public void dispose(){
-
     }
 
     @Override

@@ -5,12 +5,16 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.liamhartery.pinch.PinchGame;
@@ -19,18 +23,29 @@ import com.liamhartery.pinch.entities.Player;
 //TODO Implement .tmx map files
     //TODO implement hit detection using .tmx files
 public class GameScreen implements Screen,GestureListener {
-    final PinchGame game;
+    private final PinchGame game;
     private String message = "";
-    Texture playerImage;
-    Player player;
+    private int currentLayer = 0;
+    private Texture playerImage;
+    private TextureRegion playerRegion;
+    private Player player;
+    private TiledMapTileLayer.Cell cell;
 
-    TiledMap tiledMap;
-    TiledMapRenderer tiledMapRenderer;
+    private TiledMap tiledMap;
+    private TiledMapRenderer tiledMapRenderer;
 
-    OrthographicCamera camera;
+    private OrthographicCamera camera;
 
-    Vector3 touchPos = new Vector3();
+    private Vector3 touchPos = new Vector3();
 
+    // dispose any resource that needs disposing of
+    @Override
+    public void dispose(){
+        tiledMap.dispose();
+        playerImage.dispose();
+        game.dispose();
+
+    }
     // constructor is just like the create() method
     public GameScreen(final PinchGame pinch) {
         game = pinch;
@@ -43,12 +58,12 @@ public class GameScreen implements Screen,GestureListener {
         camera.setToOrtho(false,320,180);
 
         //Load the map
-        tiledMap = new TmxMapLoader().load("levels/testlevel2/level2.tmx");
+        tiledMap = new TmxMapLoader().load("levels/testlevel1/level1.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         // create a new Player object for the player using the playerImage
-        player = new Player(playerImage);
-        player.setPosition(200,200);
+        player = new Player(playerImage,(TiledMapTileLayer)tiledMap.getLayers().get(currentLayer));
+        player.setPosition(100,100);
 
         GestureDetector gd = new GestureDetector(this);
         Gdx.input.setInputProcessor(gd);
@@ -60,12 +75,6 @@ public class GameScreen implements Screen,GestureListener {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // Camera needs to be told to update
-        if(player.getXDistance(camera.viewportWidth)<=16){
-            camera.position.add(1,0,0);
-        }
-        if(player.getXDistance(0)>=-16){
-            camera.position.add(-1,0,0);
-        }
         camera.update();
 
         // Set the sprite batch to render using the camera's coordinates
@@ -77,15 +86,17 @@ public class GameScreen implements Screen,GestureListener {
 
         // Sprite Batch
         game.batch.begin();
-        game.font.draw(game.batch,message,50,50);
-        game.batch.draw(playerImage,player.getX(),player.getY());
+        //game.font.draw(game.batch,message,50,50);
+        game.batch.draw(playerImage,
+                player.getX()-player.getWidth()/2,
+                player.getY()-player.getWidth()/2);
         game.batch.end();
 
 
         //TODO Fix fling() and isTouched() interfering with each other
         if(Gdx.input.isTouched()){
             // If more than one finger is on the screen do nothing
-            if((Gdx.input.isTouched(1))||(Gdx.input.isTouched(2))){
+            if((Gdx.input.isTouched(1))){
 
             }else {
                 touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -145,10 +156,6 @@ public class GameScreen implements Screen,GestureListener {
     @Override
     public void resize(int x, int y){
 
-    }
-
-    @Override
-    public void dispose(){
     }
 
     @Override

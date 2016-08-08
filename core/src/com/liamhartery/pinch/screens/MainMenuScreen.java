@@ -8,11 +8,11 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.liamhartery.pinch.*;
 
 public class MainMenuScreen implements Screen{
-    final PinchGame game;
-    OrthographicCamera camera;
-    int screenWidth, screenHeight;
-    final GlyphLayout bigLayout, lilLayout;
-    float bigWidth, lilWidth;
+    private final PinchGame game;
+    private OrthographicCamera camera;
+    private int screenWidth, screenHeight;
+    private final GlyphLayout bigLayout, lilLayout;
+    private float bigWidth, lilWidth;
 
     /*
         The constructor in a Screen acts similarly to the create() method
@@ -33,6 +33,7 @@ public class MainMenuScreen implements Screen{
         bigWidth = bigLayout.width;
         lilLayout = new GlyphLayout(game.font,"Touch to Begin");
         lilWidth = lilLayout.width;
+
     }
 
     @Override

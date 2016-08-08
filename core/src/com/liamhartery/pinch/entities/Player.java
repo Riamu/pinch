@@ -7,7 +7,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector3;
 
 public class Player extends Sprite {
-    private Vector3 pos = new Vector3();
+    public Vector3 pos = new Vector3();
     private Vector3 oldPos = new Vector3();
     private Vector3 dir = new Vector3();
     private float speed = 200;
@@ -88,5 +88,15 @@ public class Player extends Sprite {
         }
         setX(pos.x);
         setY(pos.y);
+
+    }
+    public float getSpeed(){
+        return speed;
+    }
+    public void setSpeed(float speed){
+        this.speed = speed;
+    }
+    public Vector3 getDir(){
+        return dir.nor();
     }
 }

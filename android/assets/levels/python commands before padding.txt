@@ -1,0 +1,6 @@
+image = gimp.image_list()[x]
+layer = image.active_layer
+
+pdb.python_fu_sprite_gutter_add(img, tdrawable, padding, spacing, tile_width, tile_height, resize, gutter, padding_edge, spacing_edge, preserve_undo)
+
+http://thekemiren.blogspot.ca/2014/07/tile-bleeding-in-libgdx-using-tiled.html

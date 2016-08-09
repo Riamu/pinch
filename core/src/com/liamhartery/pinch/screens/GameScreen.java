@@ -19,16 +19,14 @@ import com.liamhartery.pinch.PinchGame;
 import com.liamhartery.pinch.entities.Player;
 
 //TODO enable switching layers of the dungeon
-//TODO enable level loading
+//TODO enable level loading and progression
 //TODO create enemies
 public class GameScreen implements Screen,GestureListener {
     private final PinchGame game;
     private String message = "";
     private int currentLayer = 1;
     private Texture playerImage;
-    private TextureRegion playerRegion;
     private Player player;
-    private TiledMapTileLayer.Cell cell;
 
     private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
@@ -50,7 +48,7 @@ public class GameScreen implements Screen,GestureListener {
         game = pinch;
 
         // load images
-        playerImage = new Texture(Gdx.files.internal("player.jpg"));
+        playerImage = new Texture(Gdx.files.internal("entities/player.jpg"));
 
         // create camera
         camera = new OrthographicCamera();
@@ -66,9 +64,9 @@ public class GameScreen implements Screen,GestureListener {
         // fucking make sure that the camera gets centred on the player at the beginning
         // otherwise it fucks shit up
         // this is a shitty fucking work around but I'm done with it now
-        camera.position.x = 150;
-        camera.position.y = 150;
-        player.setPosition(150,150);
+        camera.position.x = 166;
+        camera.position.y = 166;
+        player.setPosition(166,166);
         // reset the font size because our camera actually changed
         game.font.getData().setScale(0.5f,0.5f);
 
@@ -79,7 +77,7 @@ public class GameScreen implements Screen,GestureListener {
 
     @Override
     public void render(float delta){
-        Gdx.gl.glClearColor(0.13f,0.7f,0.17f,0f);
+        Gdx.gl.glClearColor(0,0,0,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         // Camera needs to be told to update
         camera.update();
@@ -100,26 +98,23 @@ public class GameScreen implements Screen,GestureListener {
 
 
         //TODO Fix fling() and isTouched() interfering with each other
+        // If the screen is touched with 1 finger we move the player towards that point
         if(Gdx.input.isTouched()){
-            // If more than one finger is on the screen do nothing
+            // If more than one finger is on the screen do nothing (most likely a pinch or zoom)
             if((Gdx.input.isTouched(1))){
                 // do nothing
             }else {
+                // we moveTowards the unprojected touchPos here
                 touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touchPos);
                 player.moveTowards(touchPos, Gdx.graphics.getDeltaTime());
             }
-        }else{
-            player.setSpeed(0f);
         }
 
         /* moving the camera when the player comes too close to the edge
-         * Yo so when it's hitting one of the x bounds we translate based on player speed in dir
+         * Yo so when it's hitting one of the x bounds we translate based on player speed with dir
          * same thing for the y axis
          */
-        // TODO make this less choppy
-        // TODO adjust how close to the edge the player must be
-        // TODO fix screen tearing (so far only happens on Samsung S5 Neo)
         // player is on the right bound
         if(player.pos.x-camera.position.x>camera.viewportWidth-camera.viewportWidth/1.2){
             camera.translate((player.getSpeed()*player.getDir().x)*delta,
@@ -162,7 +157,6 @@ public class GameScreen implements Screen,GestureListener {
 
     @Override
     public void pinchStop(){
-        return;
     }
 
     @Override

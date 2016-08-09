@@ -6,6 +6,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector3;
 
+// TODO get a better player image
+// TODO animate the player when moving
+// TODO give the player an attack
+// TODO give the player an inventory
+// TODO give the player health
+// TODO allow the player to die
 public class Player extends Sprite {
     public Vector3 pos = new Vector3();
     private Vector3 oldPos = new Vector3();

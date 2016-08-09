@@ -35,12 +35,15 @@ public class GameScreen implements Screen,GestureListener {
 
     private Vector3 touchPos = new Vector3();
 
+    private float elapsedTime = 0;
+
     // dispose any resource that needs disposing of
     @Override
     public void dispose(){
         tiledMap.dispose();
         playerImage.dispose();
         game.dispose();
+        player.dispose();
 
     }
     // constructor is just like the create() method
@@ -55,7 +58,7 @@ public class GameScreen implements Screen,GestureListener {
         camera.setToOrtho(false,320,180);
 
         //Load the map
-        tiledMap = new TmxMapLoader().load("levels/testlevel1/level1.tmx");
+        tiledMap = new TmxMapLoader().load("levels/testlevel1/level2.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         // create a new Player object for the player using the playerImage
@@ -77,6 +80,8 @@ public class GameScreen implements Screen,GestureListener {
 
     @Override
     public void render(float delta){
+        // elapsed time for the animation and score tracking
+        elapsedTime += delta;
         Gdx.gl.glClearColor(0,0,0,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         // Camera needs to be told to update
@@ -91,9 +96,10 @@ public class GameScreen implements Screen,GestureListener {
         // Sprite Batch
         game.batch.begin();
             // we draw the player using it's midpoint instead of bottom left
-            game.batch.draw(playerImage,
-                player.getX()-player.getWidth()/2,
-                player.getY()-player.getWidth()/2);
+            game.batch.draw(player.getAnimation().getKeyFrame(elapsedTime,true),
+                player.getX()-player.getWidth()/2-5,
+                player.getY()-player.getHeight()/2);
+            game.font.draw(game.batch,"Find the barrel",100,100);
         game.batch.end();
 
 
@@ -107,13 +113,16 @@ public class GameScreen implements Screen,GestureListener {
                 // we moveTowards the unprojected touchPos here
                 touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touchPos);
-                player.moveTowards(touchPos, Gdx.graphics.getDeltaTime());
+                player.moveTowards(touchPos, delta);
             }
+        }else{
+            player.setIdle();
         }
 
         /* moving the camera when the player comes too close to the edge
          * Yo so when it's hitting one of the x bounds we translate based on player speed with dir
          * same thing for the y axis
+         * TODO make this a method?
          */
         // player is on the right bound
         if(player.pos.x-camera.position.x>camera.viewportWidth-camera.viewportWidth/1.2){

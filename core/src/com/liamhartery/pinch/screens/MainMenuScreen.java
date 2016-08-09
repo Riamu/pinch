@@ -49,8 +49,9 @@ public class MainMenuScreen implements Screen{
             game.font.draw(game.batch,"Touch to Begin",(screenWidth-lilWidth)/2,200);
             // Credit to artists TODO remove this when new tileset found
             // License: https://creativecommons.org/licenses/by/3.0/
-            game.font.draw(game.batch,"Tileset courtesy of Michele \"Buch\" Buccelli at http://opengameart.org/users/buch",20,50);
-            game.font.draw(game.batch,"Abram Connelly is the assets sponsor",20,20);
+            game.font.draw(game.batch,"Tileset courtesy of Michele \"Buch\" Buccelli at http://opengameart.org/users/buch",20,60);
+            game.font.draw(game.batch,"Abram Connelly is the assets sponsor",20,40);
+            game.font.draw(game.batch,"Character by Sheep: http://opengameart.org/users/sheep",20,20);
         game.batch.end();
 
         if(Gdx.input.isTouched()){

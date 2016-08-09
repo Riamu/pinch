@@ -2,31 +2,82 @@ package com.liamhartery.pinch.entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector3;
 
-// TODO get a better player image
-// TODO animate the player when moving
+// TODO get a custom player image
 // TODO give the player an attack
 // TODO give the player an inventory
 // TODO give the player health
 // TODO allow the player to die
+
 public class Player extends Sprite {
+
+    // movement
     public Vector3 pos = new Vector3();
     private Vector3 oldPos = new Vector3();
     private Vector3 dir = new Vector3();
     private float speed = 200;
     private float distance;
+
+    // collision
     private float tileWidth,tileHeight;
     private TiledMapTileLayer collisionLayer;
     private boolean collisionX = false, collisionY = false;
 
-    public Player(Texture texture, TiledMapTileLayer layer){
-        super(texture);
+    // animation
+    private TextureAtlas textureAtlas;
+    private Animation animation;
+    private Animation downAnimation;
+    private Animation upAnimation;
+    private Animation leftAnimation;
+    private Animation rightAnimation;
+    private Animation idleAnimation;
+
+    public Player(Texture TextureAtlas, TiledMapTileLayer layer){
+        super(TextureAtlas);
         collisionLayer = layer;
         tileWidth = this.collisionLayer.getTileWidth();
         tileHeight = this.collisionLayer.getTileHeight();
+
+        // setting up animations
+        textureAtlas = new TextureAtlas(
+                Gdx.files.internal("entities/charles/charles.pack"));
+        downAnimation = new Animation(0.1f,
+                textureAtlas.findRegion("4"),
+                textureAtlas.findRegion("14"),
+                textureAtlas.findRegion("4"),
+                textureAtlas.findRegion("10")
+                );
+        upAnimation = new Animation(0.1f,
+                textureAtlas.findRegion("0"),
+                textureAtlas.findRegion("2"),
+                textureAtlas.findRegion("0"),
+                textureAtlas.findRegion("13")
+                );
+        leftAnimation = new Animation(0.1f,
+                textureAtlas.findRegion("5"),
+                textureAtlas.findRegion("15"),
+                textureAtlas.findRegion("5"),
+                textureAtlas.findRegion("9")
+                );
+        rightAnimation = new Animation(0.1f,
+                textureAtlas.findRegion("1"),
+                textureAtlas.findRegion("3"),
+                textureAtlas.findRegion("1"),
+                textureAtlas.findRegion("12")
+                );
+        idleAnimation = new Animation(0,
+                textureAtlas.findRegion("4")
+                );
+        animation = idleAnimation;
+    }
+
+    public void dispose(){
+        textureAtlas.dispose();
     }
 
     /*
@@ -57,7 +108,45 @@ public class Player extends Sprite {
         // update the position
         pos.set(pos.x+=dir.x*delta*speed,pos.y+=dir.y*delta*speed,0);
 
-        // Collision detection using tiled map
+        /*
+         * Deciding which animation to use
+         * TODO make this a method?
+         */
+        // if x,y are positive
+        if(dir.x>0&&dir.y>0){
+            if(dir.x>dir.y){
+                animation = rightAnimation;
+            }else{
+                animation = upAnimation;
+            }
+
+        // pos x neg y WORKING
+        }else if(dir.x>0&&dir.y<0){
+            if(dir.x>Math.abs(dir.y)){
+                animation = rightAnimation;
+            }else{
+                animation = downAnimation;
+            }
+        // neg x neg y
+        }else if(dir.x<0&&dir.y<0){
+            if(dir.x<dir.y){
+                animation = leftAnimation;
+            }else{
+                animation = downAnimation;
+            }
+        // neg x pos y WORKING
+        }else if(dir.x<0&&dir.y>0){
+            if(Math.abs(dir.x)>dir.y){
+                animation = leftAnimation;
+            }else{
+                animation = upAnimation;
+            }
+        }
+
+        /* Collision detection using tiled map
+        TODO clipping into things at certain angles
+        TODO make this a method?
+        */
         // if moving towards the left (negative x)
         if(dir.x<0){
             collisionX = collisionLayer.getCell(
@@ -105,4 +194,6 @@ public class Player extends Sprite {
     public Vector3 getDir(){
         return dir.nor();
     }
+    public Animation getAnimation(){return animation;}
+    public void setIdle(){animation = idleAnimation;}
 }

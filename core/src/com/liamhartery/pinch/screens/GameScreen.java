@@ -24,7 +24,7 @@ import com.liamhartery.pinch.entities.Player;
 public class GameScreen implements Screen,GestureListener {
     private final PinchGame game;
     private String message = "";
-    private int currentLayer = 1;
+    private int currentLayer = 3;
     private Texture playerImage;
     private Player player;
 
@@ -107,6 +107,8 @@ public class GameScreen implements Screen,GestureListener {
             for(int i=0; i<player.hearts.length; i++){
                 game.batch.draw(player.hearts[i],camera.position.x-130+(9*i),camera.position.y+70);
             }
+            // FPS counter
+            // game.font.draw(game.batch,"FPS: "+1f/delta,camera.position.x-144,camera.position.y+86);
         game.batch.end();
 
         //TODO Fix fling() and isTouched() interfering with each other
@@ -151,6 +153,9 @@ public class GameScreen implements Screen,GestureListener {
                     (player.getSpeed()*player.getDir().y)*delta);
         }
     }
+    // called whenever a pinchstop is registered,
+    // takes the distance fingers travelled for pinch/zoom gesture
+    // TODO check if you're in a void tile and if you are, die
     public void changeFloor(float distance){
         tiledMap.getLayers().get(1).setVisible(true);
         if(distance<0){

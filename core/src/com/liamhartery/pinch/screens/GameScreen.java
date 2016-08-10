@@ -31,11 +31,13 @@ public class GameScreen implements Screen,GestureListener {
     private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
 
-    private OrthographicCamera camera;
+    private final OrthographicCamera camera;
 
     private Vector3 touchPos = new Vector3();
 
     private float elapsedTime = 0;
+
+    private float pinchDistance;
 
     // dispose any resource that needs disposing of
     @Override
@@ -62,7 +64,7 @@ public class GameScreen implements Screen,GestureListener {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         // create a new Player object for the player using the playerImage
-        player = new Player(playerImage,(TiledMapTileLayer)tiledMap.getLayers().get(currentLayer));
+        player = new Player(playerImage,(TiledMapTileLayer)tiledMap.getLayers().get(currentLayer),6);
 
         // fucking make sure that the camera gets centred on the player at the beginning
         // otherwise it fucks shit up
@@ -95,13 +97,17 @@ public class GameScreen implements Screen,GestureListener {
         tiledMapRenderer.render();
         // Sprite Batch
         game.batch.begin();
+
             // we draw the player using it's midpoint instead of bottom left
+            // TODO get a freakin' 16x16 spritesheet
             game.batch.draw(player.getAnimation().getKeyFrame(elapsedTime,true),
                 player.getX()-player.getWidth()/2-5,
                 player.getY()-player.getHeight()/2);
-            game.font.draw(game.batch,"Find the barrel",100,100);
+            // draw hearts on top corner of screen
+            for(int i=0; i<player.hearts.length; i++){
+                game.batch.draw(player.hearts[i],camera.position.x-130+(9*i),camera.position.y+70);
+            }
         game.batch.end();
-
 
         //TODO Fix fling() and isTouched() interfering with each other
         // If the screen is touched with 1 finger we move the player towards that point
@@ -145,27 +151,47 @@ public class GameScreen implements Screen,GestureListener {
                     (player.getSpeed()*player.getDir().y)*delta);
         }
     }
-
+    public void changeFloor(float distance){
+        tiledMap.getLayers().get(1).setVisible(true);
+        if(distance<0){
+            if(currentLayer-2>=1) {
+                tiledMap.getLayers().get(currentLayer).setVisible(false);
+                tiledMap.getLayers().get(currentLayer-1).setVisible(false);
+                currentLayer -= 2;
+                tiledMap.getLayers().get(currentLayer).setVisible(true);
+                tiledMap.getLayers().get(currentLayer-1).setVisible(true);
+                player.updateLayer((TiledMapTileLayer) tiledMap.getLayers().get(currentLayer));
+            }
+        }else{
+            if(currentLayer+2<tiledMap.getLayers().getCount()) {
+                tiledMap.getLayers().get(currentLayer).setVisible(false);
+                tiledMap.getLayers().get(currentLayer-1).setVisible(false);
+                currentLayer += 2;
+                tiledMap.getLayers().get(currentLayer).setVisible(true);
+                tiledMap.getLayers().get(currentLayer-1).setVisible(true);
+                player.updateLayer((TiledMapTileLayer) tiledMap.getLayers().get(currentLayer));
+            }
+        }
+    }
     /*
      * Gesture handlers that are actually used
      * some of them aren't you see...
      */
     @Override
     public boolean zoom(float initialDistance, float distance) {
-        message = "Zoom performed, initial Distance:" + Float.toString(initialDistance) +
-                " Distance: " + Float.toString(distance);
+        pinchDistance = initialDistance-distance;
         return true;
     }
 
     @Override
     public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
                          Vector2 pointer1, Vector2 pointer2) {
-        message = "Pinch performed";
         return true;
     }
 
     @Override
     public void pinchStop(){
+        changeFloor(pinchDistance);
     }
 
     @Override

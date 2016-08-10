@@ -1,21 +1,30 @@
 package com.liamhartery.pinch.entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector3;
+import com.liamhartery.pinch.screens.GameScreen;
 
 // TODO get a custom player image
 // TODO give the player an attack
 // TODO give the player an inventory
 // TODO give the player health
 // TODO allow the player to die
+// TODO powerups
 
 public class Player extends Sprite {
 
+    //textures
+    private Texture heartTexture;
+    private Texture halfHeartTexture;
+    private Texture emptyHeartTexture;
     // movement
     public Vector3 pos = new Vector3();
     private Vector3 oldPos = new Vector3();
@@ -27,6 +36,7 @@ public class Player extends Sprite {
     private float tileWidth,tileHeight;
     private TiledMapTileLayer collisionLayer;
     private boolean collisionX = false, collisionY = false;
+    private TiledMapTile tempTile;
 
     // animation
     private TextureAtlas textureAtlas;
@@ -37,12 +47,28 @@ public class Player extends Sprite {
     private Animation rightAnimation;
     private Animation idleAnimation;
 
-    public Player(Texture TextureAtlas, TiledMapTileLayer layer){
+    // properties
+    private int health;
+    // should this maybe be in GameScreen?
+    public Texture[] hearts = new Texture[3];
+
+    // constructor
+    public Player(Texture TextureAtlas, TiledMapTileLayer layer, int initial_health){
         super(TextureAtlas);
         collisionLayer = layer;
         tileWidth = this.collisionLayer.getTileWidth();
         tileHeight = this.collisionLayer.getTileHeight();
 
+        // health and hearts
+        health = initial_health;
+        heartTexture = new Texture(Gdx.files.internal("icons/fullheart.png"));
+        emptyHeartTexture = new Texture(Gdx.files.internal("icons/emptyheart.png"));
+        halfHeartTexture = new Texture(Gdx.files.internal("icons/halfheart.png"));
+        for(int i=0;i<3;i++){
+            hearts[i] = heartTexture;
+        }
+        damage();
+        damage();
         // setting up animations
         textureAtlas = new TextureAtlas(
                 Gdx.files.internal("entities/charles/charles.pack"));
@@ -94,93 +120,26 @@ public class Player extends Sprite {
         // Speed is relative to how far away you touch. (for more precise control)
         // We also cap the speed
         speed = distance*3;
-        if(speed>100){
-            speed = 100;
+        if(speed>150){
+            speed = 150;
         }
         if(distance<=1) {
             pos.set(end.x,end.y,0);
         return;
         }
+        // set the direction vector equal to the line between touch and sprite
         dir.set(end.x - pos.x, end.y - pos.y, 0);
+        // normalize the vector (make its length equal to 1)
         dir.nor();
-        // keep our old position in case we collide with anything
+        // keep our old position for the collisionDetection() method
         oldPos.set(getX(),getY(),0);
         // update the position
         pos.set(pos.x+=dir.x*delta*speed,pos.y+=dir.y*delta*speed,0);
-
-        /*
-         * Deciding which animation to use
-         * TODO make this a method?
-         */
-        // if x,y are positive
-        if(dir.x>0&&dir.y>0){
-            if(dir.x>dir.y){
-                animation = rightAnimation;
-            }else{
-                animation = upAnimation;
-            }
-
-        // pos x neg y WORKING
-        }else if(dir.x>0&&dir.y<0){
-            if(dir.x>Math.abs(dir.y)){
-                animation = rightAnimation;
-            }else{
-                animation = downAnimation;
-            }
-        // neg x neg y
-        }else if(dir.x<0&&dir.y<0){
-            if(dir.x<dir.y){
-                animation = leftAnimation;
-            }else{
-                animation = downAnimation;
-            }
-        // neg x pos y WORKING
-        }else if(dir.x<0&&dir.y>0){
-            if(Math.abs(dir.x)>dir.y){
-                animation = leftAnimation;
-            }else{
-                animation = upAnimation;
-            }
-        }
-
-        /* Collision detection using tiled map
-        TODO clipping into things at certain angles
-        TODO make this a method?
-        */
-        // if moving towards the left (negative x)
-        if(dir.x<0){
-            collisionX = collisionLayer.getCell(
-                    (int)((getX()-getWidth()/2)/tileWidth),
-                    (int)((getY())/tileHeight))
-                        .getTile().getProperties().containsKey("blocked");
-        }
-        // if we're instead moving towards the right (positive x)
-        else if(dir.x>0){
-            collisionX = collisionLayer.getCell(
-                    (int)((getX()+getWidth()/2)/tileWidth),
-                    (int)(((getY())/tileHeight)))
-            .getTile().getProperties().containsKey("blocked");
-        }
-        // if moving downward (negative y)
-        if(dir.y<0){
-            collisionY = collisionLayer.getCell(
-                    (int)((getX())/tileWidth),
-                    (int)((getY()-getHeight()/2)/tileHeight))
-                    .getTile().getProperties().containsKey("blocked");
-        }
-        // if moving upward (positive y)
-        else if(dir.y>0){
-            collisionY = collisionLayer.getCell(
-                    (int)((getX())/tileWidth),
-                    (int)((getY()+getHeight()/2)/tileHeight))
-                    .getTile().getProperties().containsKey("blocked");
-        }
-        if(collisionX){
-            pos.set(oldPos.x,pos.y,0);
-        }
-        if(collisionY){
-            pos.set(pos.x,oldPos.y,0);
-        }
+        // animate() decides which animation to use if any
+        animate();
+        // collisionDetection will fix our position if we collide with anything
+        collisionDetection();
+        // finally once we've done all our math set X and Y to the position vector
         setX(pos.x);
         setY(pos.y);
 
@@ -196,4 +155,116 @@ public class Player extends Sprite {
     }
     public Animation getAnimation(){return animation;}
     public void setIdle(){animation = idleAnimation;}
+
+    // health methods
+    public int getHealth(){return health;}
+    public void damage(){
+        if( health ==0 ){
+            return;
+        }
+        health--;
+        if(health%2!=0){
+            hearts[health/2] = halfHeartTexture;
+        }else{
+            hearts[health/2] = emptyHeartTexture;
+        }
+    }
+    public void setHealth(int newhealth){health = newhealth;}
+    public void heal(){
+        if(health==6){
+            return;
+        }
+        health++;
+        if(health%2!=0){
+            hearts[health/2] = halfHeartTexture;
+        }else{
+            hearts[health/2-1] = heartTexture;
+        }
+    }
+
+    // called whenever the player changes layers
+    public void updateLayer(TiledMapTileLayer layer){
+        this.collisionLayer = layer;
+    }
+
+    // called whenever the player moves
+    private void collisionDetection(){
+        /* Collision detection using tiled map
+        TODO clipping into things at certain angles
+        */
+        // if moving towards the left (negative x)
+        if(dir.x<0){
+            tempTile = collisionLayer.getCell(
+                    (int)((getX()-getWidth()/2)/tileWidth),
+                    (int)((getY())/tileHeight)).getTile();
+            collisionX = tempTile.getProperties().containsKey("blocked");
+        }
+        // if we're instead moving towards the right (positive x)
+        else if(dir.x>0){
+            tempTile = collisionLayer.getCell(
+                    (int)((getX()+getWidth()/2)/tileWidth),
+                    (int)(((getY())/tileHeight))).getTile();
+            collisionX = tempTile.getProperties().containsKey("blocked");
+        }
+        // if moving downward (negative y)
+        if(dir.y<0){
+            tempTile = collisionLayer.getCell(
+                    (int)((getX())/tileWidth),
+                    (int)((getY()-getHeight()/2)/tileHeight)
+            ).getTile();
+            collisionY = tempTile.getProperties().containsKey("blocked");
+        }
+        // if moving upward (positive y)
+        else if(dir.y>0){
+            tempTile = collisionLayer.getCell(
+                    (int)((getX())/tileWidth),
+                    (int)((getY()+getHeight()/2)/tileHeight)
+            ).getTile();
+            collisionY = tempTile.getProperties().containsKey("blocked");
+        }
+        if(collisionX){
+            pos.set(oldPos.x,pos.y,0);
+        }
+        if(collisionY){
+            pos.set(pos.x,oldPos.y,0);
+        }
+    }
+
+    // called whenever the player moves
+    private void animate(){
+        /*
+         * Deciding which animation to use
+         * TODO make this a method?
+         */
+        // if x,y are positive
+        if(dir.x>0&&dir.y>0){
+            if(dir.x>dir.y){
+                animation = rightAnimation;
+            }else{
+                animation = upAnimation;
+            }
+
+            // pos x neg y WORKING
+        }else if(dir.x>0&&dir.y<0){
+            if(dir.x>Math.abs(dir.y)){
+                animation = rightAnimation;
+            }else{
+                animation = downAnimation;
+            }
+            // neg x neg y
+        }else if(dir.x<0&&dir.y<0){
+            if(dir.x<dir.y){
+                animation = leftAnimation;
+            }else{
+                animation = downAnimation;
+            }
+            // neg x pos y WORKING
+        }else if(dir.x<0&&dir.y>0){
+            if(Math.abs(dir.x)>dir.y){
+                animation = leftAnimation;
+            }else{
+                animation = upAnimation;
+            }
+        }
+    }
 }

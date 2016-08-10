@@ -5,23 +5,25 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
+import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.liamhartery.pinch.PinchGame;
 import com.liamhartery.pinch.entities.Player;
 
 //TODO enable switching layers of the dungeon
 //TODO enable level loading and progression
 //TODO create enemies
-public class GameScreen implements Screen,GestureListener {
+public class GameScreen implements Screen,GestureListener{
     private final PinchGame game;
     private String message = "";
     private int currentLayer = 3;
@@ -39,12 +41,13 @@ public class GameScreen implements Screen,GestureListener {
 
     private float pinchDistance;
 
+    private boolean longPressBool = false;
+
     // dispose any resource that needs disposing of
     @Override
     public void dispose(){
         tiledMap.dispose();
         playerImage.dispose();
-        game.dispose();
         player.dispose();
 
     }
@@ -64,7 +67,7 @@ public class GameScreen implements Screen,GestureListener {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         // create a new Player object for the player using the playerImage
-        player = new Player(playerImage,(TiledMapTileLayer)tiledMap.getLayers().get(currentLayer),6);
+        player = new Player(playerImage,(TiledMapTileLayer)tiledMap.getLayers().get(currentLayer),6,this);
 
         // fucking make sure that the camera gets centred on the player at the beginning
         // otherwise it fucks shit up
@@ -78,13 +81,15 @@ public class GameScreen implements Screen,GestureListener {
         // set the gesture detector and input processor to that gesture detector
         GestureDetector gd = new GestureDetector(this);
         Gdx.input.setInputProcessor(gd);
+
+        // this is a hack to find the winning tile
     }
 
     @Override
     public void render(float delta){
         // elapsed time for the animation and score tracking
         elapsedTime += delta;
-        Gdx.gl.glClearColor(0,0,0,0);
+        Gdx.gl.glClearColor(13/255f,7/255f,17/255f,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         // Camera needs to be told to update
         camera.update();
@@ -152,6 +157,11 @@ public class GameScreen implements Screen,GestureListener {
             camera.translate(0,
                     (player.getSpeed()*player.getDir().y)*delta);
         }
+
+        // check if the player is dead
+        if(player.getHealth()<=0){
+            lose();
+        }
     }
     // called whenever a pinchstop is registered,
     // takes the distance fingers travelled for pinch/zoom gesture
@@ -166,6 +176,10 @@ public class GameScreen implements Screen,GestureListener {
                 tiledMap.getLayers().get(currentLayer).setVisible(true);
                 tiledMap.getLayers().get(currentLayer-1).setVisible(true);
                 player.updateLayer((TiledMapTileLayer) tiledMap.getLayers().get(currentLayer));
+                if(player.isNextToVoid()){
+                    player.kill();
+                    lose();
+                }
             }
         }else{
             if(currentLayer+2<tiledMap.getLayers().getCount()) {
@@ -175,13 +189,32 @@ public class GameScreen implements Screen,GestureListener {
                 tiledMap.getLayers().get(currentLayer).setVisible(true);
                 tiledMap.getLayers().get(currentLayer-1).setVisible(true);
                 player.updateLayer((TiledMapTileLayer) tiledMap.getLayers().get(currentLayer));
+                if(player.isNextToVoid()){
+                    player.kill();
+                    lose();
+                }
             }
         }
+    }
+    public void win(){
+        game.setScreen(new WinScreen(game,elapsedTime));
+        dispose();
+    }
+    public void lose(){
+        game.setScreen(new LoseScreen(game));
+        dispose();
     }
     /*
      * Gesture handlers that are actually used
      * some of them aren't you see...
      */
+
+    @Override
+    public boolean longPress(float x, float y) {
+        longPressBool = true;
+        return true;
+    }
+
     @Override
     public boolean zoom(float initialDistance, float distance) {
         pinchDistance = initialDistance-distance;
@@ -197,6 +230,17 @@ public class GameScreen implements Screen,GestureListener {
     @Override
     public void pinchStop(){
         changeFloor(pinchDistance);
+    }
+
+    @Override
+    public boolean tap(float x, float y, int count, int button) {
+        Gdx.app.log("tapped!","");
+        /*
+        TiledMapTileLayer tempLayer = (TiledMapTileLayer)(tiledMap.getLayers().get(currentLayer));
+        if(tempLayer.getCell((int)(x/tempLayer.getTileWidth()),(int)(y/tempLayer.getTileHeight())).getTile().getProperties().containsKey("win"))
+            win();
+            */
+        return false;
     }
 
     @Override
@@ -236,16 +280,6 @@ public class GameScreen implements Screen,GestureListener {
     }
 
     @Override
-    public boolean tap(float x, float y, int count, int button) {
-        return true;
-    }
-
-    @Override
-    public boolean longPress(float x, float y) {
-        return true;
-    }
-
-    @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
         return true;
     }
@@ -254,4 +288,5 @@ public class GameScreen implements Screen,GestureListener {
     public boolean panStop(float a, float b, int c, int d){
         return true;
     }
+
 }

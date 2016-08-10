@@ -4,8 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-// this is a silly comment pushed directly to master and should probably be deleted
-
 public class PinchGame extends Game {
 	public SpriteBatch batch;
 	public BitmapFont bigfont;
@@ -17,7 +15,6 @@ public class PinchGame extends Game {
 
 		font = new BitmapFont();
 		bigfont = new BitmapFont();
-		bigfont.getData().setScale(3,3);
 
 		// Change screens to the menu screen
 		this.setScreen(new com.liamhartery.pinch.screens.MainMenuScreen(this));

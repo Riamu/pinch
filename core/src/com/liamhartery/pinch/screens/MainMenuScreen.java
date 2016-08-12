@@ -7,9 +7,10 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.liamhartery.pinch.*;
 
-public class MainMenuScreen implements Screen, GestureDetector.GestureListener{
+public class MainMenuScreen extends Stage implements Screen, GestureDetector.GestureListener{
     private final PinchGame game;
     private OrthographicCamera camera;
     private int screenWidth, screenHeight;
@@ -58,10 +59,8 @@ public class MainMenuScreen implements Screen, GestureDetector.GestureListener{
         game.batch.begin();
             game.bigfont.draw(game.batch, "P I N C H",(screenWidth-bigWidth)/2,280);
             game.font.draw(game.batch,"Tap to begin",(screenWidth-lilWidth)/2,200);
-            // Credit to artists TODO remove this when new tileset found
+            game.font.draw(game.batch,"V e r s i o n :  0 . 0 . 5",600,450);
             // License: https://creativecommons.org/licenses/by/3.0/
-            game.font.draw(game.batch,"Tileset courtesy of Michele \"Buch\" Buccelli at http://opengameart.org/users/buch",20,60);
-            game.font.draw(game.batch,"Abram Connelly is the assets sponsor",20,40);
             game.font.draw(game.batch,"Character by Sheep: http://opengameart.org/users/sheep",20,20);
         game.batch.end();
 

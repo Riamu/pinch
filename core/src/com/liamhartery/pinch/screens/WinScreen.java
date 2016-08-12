@@ -12,8 +12,7 @@ import com.liamhartery.pinch.PinchGame;
 public class WinScreen implements Screen,GestureDetector.GestureListener {
     final private PinchGame game;
     private int screenWidth, screenHeight;
-    private GlyphLayout bigLayout, lilLayout, lilLayout2;
-    float lilWidth,bigWidth;
+    private GlyphLayout bigLayout;
     private OrthographicCamera camera;
     private float time;
     public WinScreen(final PinchGame pinch, float time) {

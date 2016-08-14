@@ -1,6 +1,7 @@
 package com.liamhartery.pinch;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -8,9 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // URGENT is marked with [*]
 // FINISHED marked with [^]
 // General
-// TODO Get Better Font
 // TODO make more enemies
-// TODO Make instructions screen prettier
 // [*]TODO Dynamic level loading and progression
 // TODO re-work winning
 // TODO Main menu Buttons
@@ -19,7 +18,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // TODO Get better 16x16 Player image
 // [*]TODO give the player an attack
 // [*]TODO inventory / Powerups
-// [*]TODO Fix health bar
 // [*]TODO Key and locked door mechanic
 
 // BlobEnemy
@@ -35,8 +33,8 @@ public class PinchGame extends Game {
 	public void create () {
 		batch = new SpriteBatch();
 
-		font = new BitmapFont();
-		bigfont = new BitmapFont();
+		font = new BitmapFont(Gdx.files.internal("fonts/data_control.fnt"));
+		bigfont = new BitmapFont(Gdx.files.internal("fonts/codex.fnt"));
 
 		// Change screens to the menu screen
 		this.setScreen(new com.liamhartery.pinch.screens.MainMenuScreen(this));

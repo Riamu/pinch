@@ -9,8 +9,6 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.liamhartery.pinch.PinchGame;
 
-// TODO make instruction screen prettier
-
 public class InstructionsScreen implements Screen,GestureDetector.GestureListener {
     private final PinchGame game;
     private OrthographicCamera camera;
@@ -26,9 +24,8 @@ public class InstructionsScreen implements Screen,GestureDetector.GestureListene
         camera = new OrthographicCamera();
         camera.setToOrtho(false,screenWidth,screenHeight);
 
-        game.bigfont.getData().setScale(3,3);
-        game.font.getData().setScale(1,1);
-        bigLayout = new GlyphLayout(game.bigfont,"INSTRUCTIONS");
+        game.bigfont.getData().setScale(0.8f,0.8f);
+        bigLayout = new GlyphLayout(game.bigfont,"instructions");
         bigWidth = bigLayout.width;
 
         GestureDetector gd = new GestureDetector(this);
@@ -87,7 +84,7 @@ public class InstructionsScreen implements Screen,GestureDetector.GestureListene
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0,0,0.2f,1);
+        Gdx.gl.glClearColor(33/255f,30/255f,39/255f,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         // update the camera and look at stuff using the camera
@@ -96,15 +93,15 @@ public class InstructionsScreen implements Screen,GestureDetector.GestureListene
         game.batch.setProjectionMatrix(camera.combined);
 
         game.batch.begin();
-        game.bigfont.draw(game.batch, "INSTRUCTIONS",(screenWidth-bigWidth)/2,450);
-        game.font.getData().setScale(2,2);
-        game.font.draw(game.batch,"1. George will follow your finger",20,400);
-        game.font.draw(game.batch,"2. Pinching will make you go up one floor",20,370);
-        game.font.draw(game.batch,"3. Zooming will make you go down one floor",20,340);
-        game.font.draw(game.batch,"4. {Continue Instructions}",20,310);
-        game.font.draw(game.batch,"5. Tap to go back to the game",20,280);
-        game.font.getData().setScale(1,1);
-        game.font.draw(game.batch,"V e r s i o n :  0 . 0 . 5",600,450);
+        game.bigfont.draw(game.batch, "instructions",(screenWidth-bigWidth)/2,450);
+        game.font.draw(game.batch,"1. George will follow your finger",20,370);
+        game.font.draw(game.batch,"2. Pinching will make you go up one floor",20,340);
+        game.font.draw(game.batch,"3. Zooming will make you go down one floor",20,310);
+        game.font.draw(game.batch,"4. Tap the screen to interact with things next to you",20,280);
+        game.font.draw(game.batch,"5. Win by tapping while standing next to the door",20,250);
+        game.font.draw(game.batch,"6. Tap now to play",20,220);
+        // License: https://creativecommons.org/licenses/by/3.0/
+        game.font.draw(game.batch,"Character by Sheep: http://opengameart.org/users/sheep",20,20);
         game.batch.end();
     }
 

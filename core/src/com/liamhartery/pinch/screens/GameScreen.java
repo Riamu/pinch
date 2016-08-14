@@ -24,7 +24,6 @@ import com.liamhartery.pinch.entities.Player;
 import com.liamhartery.pinch.entities.enemies.BlobEnemy;
 
 // TODO implement dynamic level loading  and place sprites at appropriate positions
-// TODO Add winning back in
 
 public class GameScreen implements Screen,GestureListener,InputProcessor {
     private final PinchGame game;
@@ -101,7 +100,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         Gdx.input.setInputProcessor(inputMultiplexer);
         for(int i=0;i<1;i++){
             blob = new BlobEnemy(playerImage,new TextureAtlas(Gdx.files.internal("entities/enemies/blob.pack")),
-                    (TiledMapTileLayer)tiledMap.getLayers().get(currentLayer),this, new Vector2(23*16,23*16)
+                    (TiledMapTileLayer)tiledMap.getLayers().get(currentLayer+3),this, new Vector2(23*16,23*16)
             );
         }
     }
@@ -162,15 +161,13 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
 
             // draw hearts on top corner of screen
             for(int i = 0; i< player.getHearts().size(); i++){
-                Gdx.app.log("",""+player.getHearts().size());
-                game.batch.draw(player.getHearts().get(i),camera.position.x+(9*i),camera.position.y);
+                game.batch.draw(player.getHearts().get(i),camera.position.x-150+(9*i),camera.position.y+75);
             }
 
             // FPS counter
-            // game.font.draw(game.batch,"FPS: "+1f/delta,camera.position.x-144,camera.position.y+86);
+        //game.font.draw(game.batch,"FPS: "+1f/delta,camera.position.x-144,camera.position.y+86);
         game.batch.end();
 
-        //TODO Fix fling() and isTouched() interfering with each other
         // If the screen is touched with 1 finger we move the oldPlayer towards that point
         if(Gdx.input.isTouched()){
             // If more than one finger is on the screen do nothing (most likely a pinch or zoom)
@@ -190,7 +187,6 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
          * Yo so when it's hitting one of the x bounds we translate based on oldPlayer speed with dir
          * same thing for the y axis
          * TODO make this a method?
-         * TODO make oldPlayer.pos private and remove references to pos directly
          */
         // oldPlayer is on the right bound
         if(player.getPosition().x-camera.position.x>camera.viewportWidth-camera.viewportWidth/1.2){
@@ -273,6 +269,8 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
             changeFloor(-1);
         }else if(Gdx.input.isKeyPressed(Input.Keys.PAGE_UP)){
             changeFloor(1);
+        }else if(Gdx.input.isKeyPressed(Input.Keys.W)){
+            win();
         }
         return false;
     }
@@ -281,6 +279,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         longPressBool = false;
+        //Gdx.app.log("touchUP","");
         return false;
     }
 
@@ -309,22 +308,19 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         changeFloor(pinchDistance);
     }
 
-    // this will be to interact with objects soon enough
+    // when the user taps the game checks the spaces all around the player for a win
+    // items soon
     @Override
     public boolean tap(float x, float y, int count, int button) {
-        Gdx.app.log("tapped!","");
-        /*
-        TiledMapTileLayer tempLayer = (TiledMapTileLayer)(tiledMap.getLayers().get(currentLayer));
-        if(tempLayer.getCell((int)(x/tempLayer.getTileWidth()),(int)(y/tempLayer.getTileHeight())).getTile().getProperties().containsKey("win"))
-            win();
-            */
+        if(player.isNextToWin())win();
         return false;
     }
 
     // this will be used to attack
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
-        return true;
+        //Gdx.app.log("Fling performed",""+velocityX+","+velocityY);
+        return false;
     }
 
     public TiledMapTileLayer getCurrentLayer(){
@@ -356,17 +352,17 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
 
     @Override
     public boolean touchDown(float x, float y, int pointer, int button) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
-        return true;
+        return false;
     }
 
     @Override
     public boolean panStop(float a, float b, int c, int d){
-        return true;
+        return false;
     }
 
     @Override

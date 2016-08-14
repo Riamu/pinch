@@ -13,13 +13,12 @@ import java.util.ArrayList;
 // TODO Better player Sprite
 // TODO give the player an attack
 // TODO inventory / Powerups
-// TODO Fix health bar
 // TODO Key and locked door mechanic
 
 public class Player extends Entity{
     // Textures
-    private Texture heartTexture;
-    private Texture emptyHeartTexture;
+    private Texture heartTexture = new Texture(Gdx.files.internal("icons/fullheart.png"));
+    private Texture emptyHeartTexture = new Texture(Gdx.files.internal("icons/emptyheart.png"));
     private ArrayList<Texture> hearts;
 
     // Movement variables
@@ -41,7 +40,7 @@ public class Player extends Entity{
                   GameScreen screen, Vector2 pos){
         super(texture,atlas,layer,screen,pos);
         animationSetup();
-        hearts = new ArrayList<Texture>(3);
+        hearts = new ArrayList<Texture>();
         setMaxHealth(3);
         setHealth(3);
         updateHearts();
@@ -171,21 +170,33 @@ public class Player extends Entity{
         }
         return false;
     }
-
-    public void updateHearts(){
-        if(hearts.size()==0){
-            return;
+    public boolean isNextToWin(){
+        TiledMapTile tempTile;
+        for(int i=0;i<3;i++){
+            for(int j=0;j<3;j++){
+                tempTile = getCollisionLayer().getCell(
+                        (int)(getX()/getTileWidth()-1+i),
+                        (int)(getY()/getTileHeight()-1+j))
+                        .getTile();
+                if(tempTile.getProperties().containsKey("win"))
+                    return true;
+            }
         }
-        for(int i=0; i<getHealth();i++){
+        return false;
+    }
+    public void updateHearts(){
+        //Gdx.app.log("size",""+hearts.size());
+        if(hearts.size()<getMaxHealth()){
+            for(int i=0;i<getMaxHealth();i++){
+                hearts.add(i,emptyHeartTexture);
+            }
+        }
+        for(int i=0;i<getHealth();i++){
             hearts.set(i,heartTexture);
         }
-        for(int i=getHealth()+1;i<getMaxHealth();i++){
+        for(int i=getHealth();i<getMaxHealth();i++){
             hearts.set(i,emptyHeartTexture);
         }
-        for(int i=getMaxHealth()+1;i<hearts.size();i++){
-            hearts.remove(i);
-        }
-        hearts.trimToSize();
     }
 
     public ArrayList<Texture> getHearts(){

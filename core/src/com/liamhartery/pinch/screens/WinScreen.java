@@ -12,7 +12,7 @@ import com.liamhartery.pinch.PinchGame;
 public class WinScreen implements Screen,GestureDetector.GestureListener {
     final private PinchGame game;
     private int screenWidth, screenHeight;
-    private GlyphLayout bigLayout;
+    private GlyphLayout bigLayout,lilLayout;
     private OrthographicCamera camera;
     private float time;
     public WinScreen(final PinchGame pinch, float time) {
@@ -26,9 +26,7 @@ public class WinScreen implements Screen,GestureDetector.GestureListener {
         camera.setToOrtho(false,screenWidth,screenHeight);
 
         // message setups
-        bigLayout = new GlyphLayout(game.bigfont,"Congratulations you've won!");
-        game.font.getData().setScale(2,2);
-
+        bigLayout = new GlyphLayout(game.bigfont,"w i n");
         // This is so we can use gestures
         GestureDetector gd = new GestureDetector(this);
         Gdx.input.setInputProcessor(gd);
@@ -40,14 +38,16 @@ public class WinScreen implements Screen,GestureDetector.GestureListener {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0,0,0.2f,1);
+        Gdx.gl.glClearColor(33/255f,30/255f,39/255f,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
             game.bigfont.draw(game.batch,bigLayout,(screenWidth-bigLayout.width)/2,280);
-            game.font.draw(game.batch,"Final Time: "+time,100,200);
-            game.font.draw(game.batch,"Tap to return to menu, long-press to exit",100,160);
+            lilLayout = new GlyphLayout(game.font,"Final Time: "+time);
+            game.font.draw(game.batch,"Final Time: "+time,(screenWidth-lilLayout.width)/2,200);
+            lilLayout = new GlyphLayout(game.font,"Tap to return to menu, long-press to exit");
+            game.font.draw(game.batch,"Tap to return to menu, long-press to exit",(screenWidth-lilLayout.width)/2,160);
         game.batch.end();
     }
 

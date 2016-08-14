@@ -17,7 +17,7 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
     private final PinchGame game;
     private OrthographicCamera camera;
     private int screenWidth, screenHeight;
-    private final GlyphLayout bigLayout, lilLayout;
+    private GlyphLayout bigLayout, lilLayout;
     private float bigWidth, lilWidth;
 
     public LoseScreen(final PinchGame pinch) {
@@ -30,12 +30,8 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
         camera.setToOrtho(false,screenWidth,screenHeight);
 
         // this is so we can fix fonts up nice
-        game.bigfont.getData().setScale(3,3);
-        game.font.getData().setScale(1,1);
-        bigLayout = new GlyphLayout(game.bigfont,"Sorry, you've lost");
+        bigLayout = new GlyphLayout(game.bigfont,"g a m e");
         bigWidth = bigLayout.width;
-        lilLayout = new GlyphLayout(game.font,"Tap to return to the main menu, long press to exit");
-        lilWidth = lilLayout.width;
 
         // This is so we can use gestures
         GestureDetector gd = new GestureDetector(this);
@@ -44,15 +40,22 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0,0,0.2f,1);
+        Gdx.gl.glClearColor(33/255f,30/255f,39/255f,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         // update the camera and look at stuff using the camera
         camera.update();
         // game is called because we use the batch created in PinchGame
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
-            game.bigfont.draw(game.batch,"Sorry, you've lost",(screenWidth-bigWidth)/2,280);
-            game.font.draw(game.batch,"Tap to return to the main menu, long press to exit",(screenWidth-lilWidth)/2,200);
+            game.bigfont.draw(game.batch,"g a m e",(screenWidth-bigWidth)/2,320);
+            game.bigfont.draw(game.batch,"o v e r",(screenWidth-bigWidth)/2,260);
+
+            lilLayout = new GlyphLayout(game.font,"Tap to return to the main menu");
+            lilWidth = lilLayout.width;
+            game.font.draw(game.batch,"Tap to return to the main menu",(screenWidth-lilWidth)/2,180);
+            lilLayout = new GlyphLayout(game.font,"Long-press to quit");
+            lilWidth = lilLayout.width;
+            game.font.draw(game.batch,"Long-press to quit",(screenWidth-lilWidth)/2,140);
         game.batch.end();
     }
     @Override

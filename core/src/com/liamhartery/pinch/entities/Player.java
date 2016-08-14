@@ -10,15 +10,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.liamhartery.pinch.screens.GameScreen;
 
 import java.util.ArrayList;
-
 // TODO Better player Sprite
 // TODO give the player an attack
 // TODO inventory / Powerups
+// TODO Fix health bar
+// TODO Key and locked door mechanic
 
-/* TODO CHECKLIST
- *
- *
- */
 public class Player extends Entity{
     // Textures
     private Texture heartTexture;
@@ -38,6 +35,7 @@ public class Player extends Entity{
     private Animation idleAnimation;
     private Animation teleportUpAnimation;
     private Animation teleportDownAnimation;
+    private boolean invulnerable = false;
 
     public Player(Texture texture, TextureAtlas atlas, TiledMapTileLayer layer,
                   GameScreen screen, Vector2 pos){
@@ -196,5 +194,18 @@ public class Player extends Entity{
 
     public float getSpeed(){
         return speed;
+    }
+
+    public void setInvulnerable(boolean state){
+        invulnerable = state;
+    }
+    public boolean getInvulnerable(){
+        return invulnerable;
+    }
+
+    public void takeDamage(int dmg){
+        if(!invulnerable){
+            setHealth(getHealth()-dmg);
+        }
     }
 }

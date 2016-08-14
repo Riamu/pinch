@@ -1,6 +1,5 @@
 package com.liamhartery.pinch.entities;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -77,11 +76,15 @@ public abstract class Entity extends Sprite {
 
     public void update(float delta){
     }
+    public int playerDamage(Player player){
+        return 0;
+    }
 
     public void attack(){
     }
 
-    public void takeDamage(){
+    public void takeDamage(int dmg){
+        health-=dmg;
     }
 
     public void setHealth(){
@@ -224,5 +227,8 @@ public abstract class Entity extends Sprite {
     }
     public void setAnimation(Animation newAnimation){
         animation = newAnimation;
+    }
+    public GameScreen getGame(){
+        return gameScreen;
     }
 }

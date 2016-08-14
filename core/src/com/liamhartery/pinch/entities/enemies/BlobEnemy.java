@@ -1,13 +1,12 @@
 package com.liamhartery.pinch.entities.enemies;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import java.util.Random;
 import com.badlogic.gdx.math.Vector2;
 import com.liamhartery.pinch.entities.Entity;
+import com.liamhartery.pinch.entities.Player;
 import com.liamhartery.pinch.screens.GameScreen;
 import com.badlogic.gdx.math.RandomXS128;
 
@@ -21,14 +20,15 @@ import com.badlogic.gdx.math.RandomXS128;
  *  1dmg
  *  50 movement speed
  *
- *  TODO able to damage player
  *  TODO better movement
  *  TODO death
+ *
  */
 
 public class BlobEnemy extends Entity {
     private int speed = 25;
     private RandomXS128 random = new RandomXS128();
+    private int damage = 1;
 
     public BlobEnemy(Texture texture, TextureAtlas atlas, TiledMapTileLayer layer,
                      GameScreen gameScreen, Vector2 position){
@@ -53,6 +53,9 @@ public class BlobEnemy extends Entity {
         setDirection(getDirection().nor());
     }
     public void update(float delta){
+        if(getGame().getCurrentLayer()!=getCollisionLayer()){
+            return;
+        }
         setOldPosition(getX(),getY());
         getPosition().x+=delta*speed*getDirection().x;
         getPosition().y+=delta*speed*getDirection().y;
@@ -68,5 +71,14 @@ public class BlobEnemy extends Entity {
         setY(getPosition().y);
     }
     public void dispose(){super.dispose();}
+
+    public int playerDamage(Player player){
+        if(player.getCollisionLayer()==this.getCollisionLayer()) {
+            if (player.getBoundingRectangle().overlaps(this.getBoundingRectangle())) {
+                return damage;
+            }
+        }
+        return 0;
+    }
 }
 

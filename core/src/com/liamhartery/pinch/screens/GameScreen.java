@@ -1,6 +1,9 @@
 package com.liamhartery.pinch.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -20,15 +23,17 @@ import com.liamhartery.pinch.entities.Entity;
 import com.liamhartery.pinch.entities.Player;
 import com.liamhartery.pinch.entities.enemies.BlobEnemy;
 
-//TODO enable switching layers of the dungeon
-//TODO enable level loading and progression
-//TODO create enemies
-public class GameScreen implements Screen,GestureListener{
+// TODO implement dynamic level loading  and place sprites at appropriate positions
+// TODO Add winning back in
+
+public class GameScreen implements Screen,GestureListener,InputProcessor {
     private final PinchGame game;
-    private String message = "";
-    private int currentLayer = 2;
+    private int currentLayer = 5;
     private Texture playerImage;
     private Player player;
+
+    private InputMultiplexer inputMultiplexer;
+    private GestureDetector gd;
 
     private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
@@ -43,6 +48,8 @@ public class GameScreen implements Screen,GestureListener{
 
     private boolean longPressBool = false;
     private BlobEnemy blob;
+
+    private float invulTimer = 0;
     // dispose any resource that needs disposing of
     @Override
     public void dispose(){
@@ -66,7 +73,7 @@ public class GameScreen implements Screen,GestureListener{
         camera.setToOrtho(false,320,180);
 
         //Load the map
-        tiledMap = new TmxMapLoader().load("levels/testlevel1/testlevel3.tmx");
+        tiledMap = new TmxMapLoader().load("levels/level1/level1.1.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         // create a new Player object for the oldPlayer using the playerImage
@@ -79,23 +86,35 @@ public class GameScreen implements Screen,GestureListener{
         // fucking make sure that the camera gets centred on the oldPlayer at the beginning
         // otherwise it fucks shit up
         // this is a shitty fucking work around but I'm done with it now
-        camera.position.x = 166;
-        camera.position.y = 166;
-        player.setPosition(166,166);
+        camera.position.x = 400;
+        camera.position.y = 400;
+        player.setPosition(400,400);
         // reset the font size because our camera actually changed
         game.font.getData().setScale(0.5f,0.5f);
 
         // set the gesture detector and input processor to that gesture detector
-        GestureDetector gd = new GestureDetector(this);
-        Gdx.input.setInputProcessor(gd);
-
-        blob = new BlobEnemy(playerImage,new TextureAtlas(Gdx.files.internal("entities/enemies/blob.pack")),
-                (TiledMapTileLayer)tiledMap.getLayers().get(currentLayer),this, new Vector2(22*16,9*16)
-                );
+        gd = new GestureDetector(this);
+        gd.setLongPressSeconds(0.05f);
+        inputMultiplexer = new InputMultiplexer();
+        inputMultiplexer.addProcessor(gd);
+        inputMultiplexer.addProcessor(this);
+        Gdx.input.setInputProcessor(inputMultiplexer);
+        for(int i=0;i<1;i++){
+            blob = new BlobEnemy(playerImage,new TextureAtlas(Gdx.files.internal("entities/enemies/blob.pack")),
+                    (TiledMapTileLayer)tiledMap.getLayers().get(currentLayer),this, new Vector2(23*16,23*16)
+            );
+        }
     }
 
     @Override
     public void render(float delta){
+        if(invulTimer>1){
+            player.setInvulnerable(false);
+            invulTimer=0;
+        }
+        if(player.getInvulnerable()){
+            invulTimer+=delta;
+        }
         // elapsed time for the animation and score tracking
         elapsedTime += delta;
         Gdx.gl.glClearColor(33/255f,30/255f,39/255f,0);
@@ -110,26 +129,41 @@ public class GameScreen implements Screen,GestureListener{
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
 
+
+        // Update all entities
         for(int i=0; i<Entity.getEntities().size(); i++){
             Entity.getEntities().get(i).update(delta);
+            int damage = Entity.getEntities().get(i).playerDamage(player);
+            player.takeDamage(damage);
+            if(damage>0){
+                player.setInvulnerable(true);
+            }
         }
+        player.updateHearts();
+
         // Sprite Batch
         game.batch.begin();
+            // Draw all entities
             for(int i=0; i<Entity.getEntities().size();i++){
                 Entity tempEntity = Entity.getEntities().get(i);
-                game.batch.draw(tempEntity.getAnimation().getKeyFrame(elapsedTime,true),
-                    tempEntity.getX()-tempEntity.getWidth()/2,
-                    tempEntity.getY()-tempEntity.getHeight()/2);
+                if(tempEntity.getCollisionLayer()!=getCurrentLayer()) {
+                    // do nothing
+                }else {
+                    game.batch.draw(tempEntity.getAnimation().getKeyFrame(elapsedTime, true),
+                            tempEntity.getX() - tempEntity.getWidth() / 2,
+                            tempEntity.getY() - tempEntity.getHeight() / 2);
+                }
             }
             // we draw the player using it's midpoint instead of bottom left
             // TODO get a freakin' 16x16 spritesheet
             game.batch.draw(player.getAnimation().getKeyFrame(elapsedTime,true),
                 player.getX()- player.getWidth()/2-5,
                 player.getY()- player.getHeight()/2);
+
             // draw hearts on top corner of screen
             for(int i = 0; i< player.getHearts().size(); i++){
                 Gdx.app.log("",""+player.getHearts().size());
-                game.batch.draw(player.getHearts().get(i),camera.position.x-130+(9*i),camera.position.y+70);
+                game.batch.draw(player.getHearts().get(i),camera.position.x+(9*i),camera.position.y);
             }
 
             // FPS counter
@@ -147,8 +181,6 @@ public class GameScreen implements Screen,GestureListener{
                 touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touchPos);
                 player.update(touchPos.x,touchPos.y, delta);
-                // so we need to reset longPressBool using a touchUp event
-                // TODO input multiplexer
             }
         }else{
             player.setIdle();
@@ -234,29 +266,50 @@ public class GameScreen implements Screen,GestureListener{
      * some of them aren't you see...
      */
 
+    // Keyboard input for changing floors
+    @Override
+    public boolean keyDown(int keycode) {
+        if(Gdx.input.isKeyPressed(Input.Keys.PAGE_DOWN)){
+            changeFloor(-1);
+        }else if(Gdx.input.isKeyPressed(Input.Keys.PAGE_UP)){
+            changeFloor(1);
+        }
+        return false;
+    }
+
+    // resets the longPressBool
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        longPressBool = false;
+        return false;
+    }
+
+    // sets the longPressBool
     @Override
     public boolean longPress(float x, float y) {
         longPressBool = true;
-        return true;
+        return false;
     }
 
+    // sets the distance for a pinch
     @Override
     public boolean zoom(float initialDistance, float distance) {
         pinchDistance = initialDistance-distance;
-        return true;
+        return false;
     }
-
+    // actually doesn't do anything
     @Override
     public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
                          Vector2 pointer1, Vector2 pointer2) {
-        return true;
+        return false;
     }
-
+    // calls the changeFloor method with the distance determined in the zoom method
     @Override
     public void pinchStop(){
         changeFloor(pinchDistance);
     }
 
+    // this will be to interact with objects soon enough
     @Override
     public boolean tap(float x, float y, int count, int button) {
         Gdx.app.log("tapped!","");
@@ -268,13 +321,15 @@ public class GameScreen implements Screen,GestureListener{
         return false;
     }
 
+    // this will be used to attack
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
-        message = "Fling performed, velocity:" + Float.toString(velocityX) +
-                "," + Float.toString(velocityY);
         return true;
     }
 
+    public TiledMapTileLayer getCurrentLayer(){
+        return player.getCollisionLayer();
+    }
     // None of the following are used
     @Override
     public void show(){
@@ -314,4 +369,33 @@ public class GameScreen implements Screen,GestureListener{
         return true;
     }
 
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
+    }
 }

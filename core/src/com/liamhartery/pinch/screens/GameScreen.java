@@ -9,13 +9,16 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureListener;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.liamhartery.pinch.PinchGame;
@@ -23,12 +26,11 @@ import com.liamhartery.pinch.entities.Entity;
 import com.liamhartery.pinch.entities.Player;
 import com.liamhartery.pinch.entities.enemies.BlobEnemy;
 
-// TODO implement dynamic level loading  and place sprites at appropriate positions
-
+// TODO Fix bounding boxes (actually if all of them are off it's nbd)
 public class GameScreen implements Screen,GestureListener,InputProcessor {
     private final PinchGame game;
     private int currentLayer = 5;
-    private Texture playerImage;
+    //private Texture playerImage;
     private Player player;
 
     private InputMultiplexer inputMultiplexer;
@@ -44,16 +46,20 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     private float elapsedTime = 0;
 
     private float pinchDistance;
+    private float startingPlayerX;
+    private float startingPlayerY;
 
     private boolean longPressBool = false;
-    private BlobEnemy blob;
 
     private float invulTimer = 0;
+    private boolean firstFrame = true;
+
+    private ShapeRenderer shapeRenderer = new ShapeRenderer();
     // dispose any resource that needs disposing of
     @Override
     public void dispose(){
         tiledMap.dispose();
-        playerImage.dispose();
+        //playerImage.dispose();
         player.dispose();
         for(int i=0;i<Entity.getEntities().size();i++){
             Entity.getEntities().get(i).dispose();
@@ -65,7 +71,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         game = pinch;
 
         // load images
-        playerImage = new Texture(Gdx.files.internal("entities/player.jpg"));
+        //playerImage = new Texture(Gdx.files.internal("entities/player2.jpg"));
 
         // create camera
         camera = new OrthographicCamera();
@@ -74,20 +80,19 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         //Load the map
         tiledMap = new TmxMapLoader().load("levels/level1/level1.1.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
-
-        // create a new Player object for the oldPlayer using the playerImage
-        player = new Player(playerImage,
+        setUpTiledMap();
+        // create a new Player object for the Player using the playerImage
+        player = new Player(
                 new TextureAtlas("entities/charles/charles.pack"),
                 (TiledMapTileLayer)tiledMap.getLayers().get(currentLayer),
                 this,
-                new Vector2(0,0));
+                new Vector2(startingPlayerX,startingPlayerY));
 
-        // fucking make sure that the camera gets centred on the oldPlayer at the beginning
-        // otherwise it fucks shit up
-        // this is a shitty fucking work around but I'm done with it now
-        camera.position.x = 400;
-        camera.position.y = 400;
-        player.setPosition(400,400);
+        // at startup make sure the camera is centred on the player
+        // otherwise some badshit(tm) can happen
+        camera.position.x = startingPlayerX;
+        camera.position.y = startingPlayerY;
+        player.setPosition(startingPlayerX,startingPlayerY);
         // reset the font size because our camera actually changed
         game.font.getData().setScale(0.5f,0.5f);
 
@@ -98,15 +103,14 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         inputMultiplexer.addProcessor(gd);
         inputMultiplexer.addProcessor(this);
         Gdx.input.setInputProcessor(inputMultiplexer);
-        for(int i=0;i<1;i++){
-            blob = new BlobEnemy(playerImage,new TextureAtlas(Gdx.files.internal("entities/enemies/blob.pack")),
-                    (TiledMapTileLayer)tiledMap.getLayers().get(currentLayer+3),this, new Vector2(23*16,23*16)
-            );
-        }
     }
 
     @Override
     public void render(float delta){
+        if(firstFrame){
+            delta = 0;
+            firstFrame = false;
+        }
         if(invulTimer>1){
             player.setInvulnerable(false);
             invulTimer=0;
@@ -154,20 +158,41 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                 }
             }
             // we draw the player using it's midpoint instead of bottom left
-            // TODO get a freakin' 16x16 spritesheet
+            // TODO get a freakin' 16x16 spritesheet (might help with your boxes a bit)
             game.batch.draw(player.getAnimation().getKeyFrame(elapsedTime,true),
                 player.getX()- player.getWidth()/2-5,
-                player.getY()- player.getHeight()/2);
-
+                player.getY()- player.getHeight()/2
+            );
             // draw hearts on top corner of screen
             for(int i = 0; i< player.getHearts().size(); i++){
                 game.batch.draw(player.getHearts().get(i),camera.position.x-150+(9*i),camera.position.y+75);
             }
-
-            // FPS counter
-        //game.font.draw(game.batch,"FPS: "+1f/delta,camera.position.x-144,camera.position.y+86);
+        // FPS counter
+        //game.font.getData().setScale(0.25f);
+        //game.font.draw(game.batch,"FPS: "+1f/delta,camera.position.x+100,camera.position.y+86);
         game.batch.end();
 
+
+        shapeRenderer.setProjectionMatrix(camera.combined);
+
+        // Our bounding boxes are all out of whack
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+            shapeRenderer.setColor(0,1,0,1);
+            shapeRenderer.rect(
+                    player.getBoundingRectangle().getX(),
+                    player.getBoundingRectangle().getY(),
+                    player.getBoundingRectangle().getWidth(),
+                    player.getBoundingRectangle().getHeight()
+            );
+            for(int i=0;i<Entity.getEntities().size();i++){
+                shapeRenderer.rect(
+                        Entity.getEntities().get(i).getBoundingRectangle().getX(),
+                        Entity.getEntities().get(i).getBoundingRectangle().getY(),
+                        Entity.getEntities().get(i).getBoundingRectangle().getWidth(),
+                        Entity.getEntities().get(i).getBoundingRectangle().getHeight()
+                );
+            }
+        shapeRenderer.end();
         // If the screen is touched with 1 finger we move the oldPlayer towards that point
         if(Gdx.input.isTouched()){
             // If more than one finger is on the screen do nothing (most likely a pinch or zoom)
@@ -184,39 +209,39 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         }
 
         /* moving the camera when the oldPlayer comes too close to the edge
-         * Yo so when it's hitting one of the x bounds we translate based on oldPlayer speed with dir
+         * Yo so when it's hitting one of the x bounds we translate based on Player speed with dir
          * same thing for the y axis
          * TODO make this a method?
          */
-        // oldPlayer is on the right bound
+        // Player is on the right bound
         if(player.getPosition().x-camera.position.x>camera.viewportWidth-camera.viewportWidth/1.2){
             camera.translate((player.getSpeed()* player.getDirection().x)*delta,
                     0);
-        // oldPlayer is on the left bound
+        // Player is on the left bound
         }
         else if(player.getPosition().x-camera.position.x<camera.viewportWidth/1.2-camera.viewportWidth){
             camera.translate((player.getSpeed()* player.getDirection().x)*delta,
                     0);
         }
-        // oldPlayer is on the bottom bound
-        if(player.getPosition().y-camera.position.y>camera.viewportHeight-camera.viewportHeight/1.2){
+        // Player is on the top bound
+        if(player.getPosition().y-camera.position.y>camera.viewportHeight-camera.viewportHeight/1.05){
             camera.translate(0,
                     (player.getSpeed()* player.getDirection().y)*delta);
-        // oldPlayer is on the top bound
+
         }
+        // Player is on the bottom bound
         else if(player.getPosition().y-camera.position.y<camera.viewportHeight/1.2-camera.viewportHeight){
             camera.translate(0,
                     (player.getSpeed()* player.getDirection().y)*delta);
         }
 
-        // check if the oldPlayer is dead
+        // check if the Player is dead
         if(player.getHealth()<=0){
             lose();
         }
     }
     // called whenever a pinchStop is registered,
     // takes the distance fingers travelled for pinch/zoom gesture
-    // TODO check if you're in a void tile and if you are, die
     public void changeFloor(float distance){
         tiledMap.getLayers().get(currentLayer).setVisible(false);
         if(distance<0){
@@ -228,7 +253,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                 tiledMap.getLayers().get(currentLayer-1).setVisible(true);
                 tiledMap.getLayers().get(currentLayer-2).setVisible(true);
                 player.updateLayer((TiledMapTileLayer) tiledMap.getLayers().get(currentLayer));
-                if(player.isNextToVoid()){
+                if(player.isNextTo("void")){
                     player.kill();
                     lose();
                 }
@@ -242,7 +267,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                 tiledMap.getLayers().get(currentLayer-1).setVisible(true);
                 tiledMap.getLayers().get(currentLayer-2).setVisible(true);
                 player.updateLayer((TiledMapTileLayer) tiledMap.getLayers().get(currentLayer));
-                if(player.isNextToVoid()){
+                if(player.isNextTo("void")){
                     player.kill();
                     lose();
                 }
@@ -270,7 +295,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         }else if(Gdx.input.isKeyPressed(Input.Keys.PAGE_UP)){
             changeFloor(1);
         }else if(Gdx.input.isKeyPressed(Input.Keys.W)){
-            win();
+            player.attack();
         }
         return false;
     }
@@ -312,7 +337,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     // items soon
     @Override
     public boolean tap(float x, float y, int count, int button) {
-        if(player.isNextToWin())win();
+        if(player.isNextTo("win"))win();
         return false;
     }
 
@@ -320,11 +345,39 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
         //Gdx.app.log("Fling performed",""+velocityX+","+velocityY);
+
+        player.attack(velocityX,velocityY);
         return false;
     }
 
     public TiledMapTileLayer getCurrentLayer(){
         return player.getCollisionLayer();
+    }
+
+    // put anything that's in the tiledMap that needs a sprite in here
+    public void setUpTiledMap(){
+        for(int layerNum=0;layerNum<tiledMap.getLayers().getCount();layerNum++) {
+            TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(layerNum);
+            for(int x=0;x<layer.getWidth();x++){
+                for(int y=0;y<layer.getHeight();y++){
+                    TiledMapTileLayer.Cell cell = layer.getCell(x,y);
+                    if(cell==null)break;
+                    MapProperties properties = cell.getTile().getProperties();
+                    // "start" is the player starting position property
+                    if(properties.containsKey("start")){
+                        startingPlayerX = x*layer.getTileWidth();
+                        startingPlayerY = y*layer.getTileHeight();
+                        currentLayer = layerNum;
+                    }
+                    // "blob" is a blob enemy
+                    else if(properties.containsKey("blob")){
+                        new BlobEnemy(new TextureAtlas(Gdx.files.internal("entities/enemies/blob.pack")),
+                                (TiledMapTileLayer)tiledMap.getLayers().get(layerNum),this,
+                                new Vector2(x*layer.getTileWidth(),y*layer.getTileHeight()));
+                    }
+                }
+            }
+        }
     }
     // None of the following are used
     @Override

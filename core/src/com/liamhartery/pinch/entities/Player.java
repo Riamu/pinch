@@ -34,18 +34,25 @@ public class Player extends Entity{
     private Animation idleAnimation;
     private Animation teleportUpAnimation;
     private Animation teleportDownAnimation;
-    private boolean invulnerable = false;
 
-    public Player(Texture texture, TextureAtlas atlas, TiledMapTileLayer layer,
+    // booleans
+    private boolean invulnerable = false;
+    private boolean hasKey = false;
+
+    public Player(TextureAtlas atlas, TiledMapTileLayer layer,
                   GameScreen screen, Vector2 pos){
-        super(texture,atlas,layer,screen,pos);
+        super(new Texture(Gdx.files.internal("entities/player.jpg")),
+                atlas,layer,screen,pos);
         animationSetup();
         hearts = new ArrayList<Texture>();
-        setMaxHealth(3);
-        setHealth(3);
+        setMaxHealth(20);
+        setHealth(20);
         updateHearts();
+        setOriginCenter();
+
     }
     public void update(float x, float y, float delta){
+
         Vector2 end = new Vector2(x,y);
         setPosition(getX(), getY());
         distance = getPosition().dst(end);
@@ -79,6 +86,7 @@ public class Player extends Entity{
         // finally once we've done all our math set X and Y to the position vector
         setX(getPosition().x);
         setY(getPosition().y);
+        getBoundingRectangle().setSize(500);
         updateHearts();
     }
 
@@ -155,8 +163,7 @@ public class Player extends Entity{
     public Animation getAnimation(){
         return animation;
     }
-
-    public boolean isNextToVoid(){
+    public boolean isNextTo(String string){
         TiledMapTile tempTile;
         for(int i=0;i<3;i++){
             for(int j=0;j<3;j++){
@@ -164,21 +171,7 @@ public class Player extends Entity{
                         (int)(getX()/getTileWidth()-1+i),
                         (int)(getY()/getTileHeight()-1+j))
                         .getTile();
-                if(tempTile.getProperties().containsKey("void"))
-                    return true;
-            }
-        }
-        return false;
-    }
-    public boolean isNextToWin(){
-        TiledMapTile tempTile;
-        for(int i=0;i<3;i++){
-            for(int j=0;j<3;j++){
-                tempTile = getCollisionLayer().getCell(
-                        (int)(getX()/getTileWidth()-1+i),
-                        (int)(getY()/getTileHeight()-1+j))
-                        .getTile();
-                if(tempTile.getProperties().containsKey("win"))
+                if(tempTile.getProperties().containsKey(string))
                     return true;
             }
         }
@@ -218,5 +211,14 @@ public class Player extends Entity{
         if(!invulnerable){
             setHealth(getHealth()-dmg);
         }
+    }
+    public void attack(float velX, float velY){
+        // Find the direction the fling occured in dir = new Vector2(velocityX,velocityY)
+        // Normalize the direction vector dir.nor()
+        // Spawn a new projectile at the player's position and add it to the projectile list
+        // it will then move towards the normalized direction vector
+        // if it collides with something we deal damage to it and kill the projectile
+        //     should we check every projectile with every entity?
+        //         We could do a prelim check on x and y coords for each
     }
 }

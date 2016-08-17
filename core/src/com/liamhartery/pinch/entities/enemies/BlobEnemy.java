@@ -1,5 +1,6 @@
 package com.liamhartery.pinch.entities.enemies;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -21,7 +22,7 @@ import com.badlogic.gdx.math.RandomXS128;
  *  50 movement speed
  *
  *  TODO better movement
- *  TODO death
+ *  TODO death (actually he can die now the player just can't deal damage to him)
  *
  */
 
@@ -30,10 +31,12 @@ public class BlobEnemy extends Entity {
     private RandomXS128 random = new RandomXS128();
     private int damage = 1;
 
-    public BlobEnemy(Texture texture, TextureAtlas atlas, TiledMapTileLayer layer,
+    public BlobEnemy( TextureAtlas atlas, TiledMapTileLayer layer,
                      GameScreen gameScreen, Vector2 position){
-        super(texture,atlas,layer,gameScreen,position);
+        super(new Texture(Gdx.files.internal("entities/player.jpg")),
+                atlas,layer,gameScreen,position);
         setMaxHealth(5);
+        setHealth(5);
         setPosition(position);
         setDirection(1,1);
         chooseDirection();
@@ -70,7 +73,10 @@ public class BlobEnemy extends Entity {
         setX(getPosition().x);
         setY(getPosition().y);
     }
-    public void dispose(){super.dispose();}
+    public void dispose(){
+        getEntities().remove(this);
+        super.dispose();
+    }
 
     public int playerDamage(Player player){
         if(player.getCollisionLayer()==this.getCollisionLayer()) {
@@ -80,5 +86,6 @@ public class BlobEnemy extends Entity {
         }
         return 0;
     }
+
 }
 

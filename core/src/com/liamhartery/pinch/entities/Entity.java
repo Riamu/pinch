@@ -1,5 +1,6 @@
 package com.liamhartery.pinch.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -85,6 +86,10 @@ public abstract class Entity extends Sprite {
 
     public void takeDamage(int dmg){
         health-=dmg;
+        Gdx.app.log("Health: ",""+health);
+        if(health<=0){
+            kill();
+        }
     }
 
     public void setHealth(){
@@ -102,7 +107,8 @@ public abstract class Entity extends Sprite {
         }
     }
     public void kill(){
-        health = 0;
+        entities.remove(this);
+        dispose();
     }
 
     public void setMaxHealth(int newMaxHealth){
@@ -230,5 +236,19 @@ public abstract class Entity extends Sprite {
     }
     public GameScreen getGame(){
         return gameScreen;
+    }
+    public boolean isNextTo(String string){
+        TiledMapTile tempTile;
+        for(int i=0;i<3;i++){
+            for(int j=0;j<3;j++){
+                tempTile = getCollisionLayer().getCell(
+                        (int)(getX()/getTileWidth()-1+i),
+                        (int)(getY()/getTileHeight()-1+j))
+                        .getTile();
+                if(tempTile.getProperties().containsKey(string))
+                    return true;
+            }
+        }
+        return false;
     }
 }

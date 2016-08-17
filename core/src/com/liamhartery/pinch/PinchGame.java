@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // FINISHED marked with [^]
 // General
 // TODO make more enemies
-// [*]TODO Dynamic level loading and progression
+// [*]TODO be able to continue playing after first level
 // TODO re-work winning
 // TODO Main menu Buttons
 

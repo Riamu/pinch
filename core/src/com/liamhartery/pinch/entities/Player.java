@@ -41,8 +41,7 @@ public class Player extends Entity{
 
     public Player(TextureAtlas atlas, TiledMapTileLayer layer,
                   GameScreen screen, Vector2 pos){
-        super(new Texture(Gdx.files.internal("entities/player.jpg")),
-                atlas,layer,screen,pos);
+        super(atlas,layer,screen,pos);
         animationSetup();
         hearts = new ArrayList<Texture>();
         setMaxHealth(20);
@@ -53,7 +52,7 @@ public class Player extends Entity{
     }
     public void update(float x, float y, float delta){
 
-        Vector2 end = new Vector2(x,y);
+        Vector2 end = new Vector2(x-getHeight()/2,y-getHeight()/2);
         setPosition(getX(), getY());
         distance = getPosition().dst(end);
 

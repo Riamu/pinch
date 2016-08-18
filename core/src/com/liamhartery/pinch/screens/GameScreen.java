@@ -26,7 +26,6 @@ import com.liamhartery.pinch.entities.Entity;
 import com.liamhartery.pinch.entities.Player;
 import com.liamhartery.pinch.entities.enemies.BlobEnemy;
 
-// TODO Fix bounding boxes (actually if all of them are off it's nbd)
 public class GameScreen implements Screen,GestureListener,InputProcessor {
     private final PinchGame game;
     private int currentLayer = 5;
@@ -153,15 +152,15 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                     // do nothing
                 }else {
                     game.batch.draw(tempEntity.getAnimation().getKeyFrame(elapsedTime, true),
-                            tempEntity.getX() - tempEntity.getWidth() / 2,
-                            tempEntity.getY() - tempEntity.getHeight() / 2);
+                            tempEntity.getX(),
+                            tempEntity.getY());
                 }
             }
             // we draw the player using it's midpoint instead of bottom left
-            // TODO get a freakin' 16x16 spritesheet (might help with your boxes a bit)
+            // TODO get a new character spritesheet
             game.batch.draw(player.getAnimation().getKeyFrame(elapsedTime,true),
-                player.getX()- player.getWidth()/2-5,
-                player.getY()- player.getHeight()/2
+                player.getX(),
+                player.getY()
             );
             // draw hearts on top corner of screen
             for(int i = 0; i< player.getHearts().size(); i++){
@@ -211,7 +210,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         /* moving the camera when the oldPlayer comes too close to the edge
          * Yo so when it's hitting one of the x bounds we translate based on Player speed with dir
          * same thing for the y axis
-         * TODO make this a method?
+         * TODO make this a method
          */
         // Player is on the right bound
         if(player.getPosition().x-camera.position.x>camera.viewportWidth-camera.viewportWidth/1.2){

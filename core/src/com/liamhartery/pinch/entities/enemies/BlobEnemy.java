@@ -33,8 +33,7 @@ public class BlobEnemy extends Entity {
 
     public BlobEnemy( TextureAtlas atlas, TiledMapTileLayer layer,
                      GameScreen gameScreen, Vector2 position){
-        super(new Texture(Gdx.files.internal("entities/player.jpg")),
-                atlas,layer,gameScreen,position);
+        super(atlas,layer,gameScreen,position);
         setMaxHealth(5);
         setHealth(5);
         setPosition(position);

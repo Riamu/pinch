@@ -53,14 +53,9 @@ public abstract class Entity extends Sprite {
     // GameScreen
     private final GameScreen gameScreen;
 
-
-    /*
-     * Constructor takes many things and this is probably bad
-     */
+    // try to make sure this constructor stays unused unless 200% necessary
     public Entity(Texture texture, TextureAtlas atlas,
                   TiledMapTileLayer layer, GameScreen screen, Vector2 pos){
-        // textures are mostly useless here I think actually, probably don't even need
-        // to extend Sprite at this point
         super(texture);
         dir = new Vector2(0,0);
         oldPosition = new Vector2(0,0);
@@ -71,6 +66,27 @@ public abstract class Entity extends Sprite {
         maxHealth = 3;
         health = maxHealth;
         attackDamage = 1;
+        position = pos;
+        textureAtlas = atlas;
+    }
+
+    // this is the only constructor that should be used in most cases
+    public Entity(TextureAtlas atlas,TiledMapTileLayer layer, GameScreen screen, Vector2 pos){
+        // it calls the sprite constructor with an atlas region so hit boxes are better
+        super(atlas.getRegions().get(0));
+        dir = new Vector2(0,0);
+        oldPosition = new Vector2(0,0);
+        collisionLayer = layer;
+        gameScreen = screen;
+        tileWidth = collisionLayer.getTileWidth();
+        tileHeight = collisionLayer.getTileHeight();
+
+        // health defaults
+        maxHealth = 3;
+        health = maxHealth;
+        // damage defaults
+        attackDamage = 1;
+
         position = pos;
         textureAtlas = atlas;
     }
@@ -120,17 +136,18 @@ public abstract class Entity extends Sprite {
     }
 
     public boolean collisionDetectionX(){
+        // towards left
         if (dir.x < 0f) {
             tempTile = collisionLayer.getCell(
-                    (int) ((getX() - getWidth() / 2) / tileWidth),
-                    (int) ((getY()) / tileHeight)).getTile();
+                    (int) ((getX())/tileWidth),
+                    (int) (((getY()+getHeight()/2)/tileHeight))).getTile();
             return tempTile.getProperties().containsKey("blocked");
         }
-        // if we're instead moving towards the right (positive x)
+        // towards right
         else if (dir.x > 0f) {
             tempTile = collisionLayer.getCell(
-                    (int) ((getX() + getWidth() / 2) / tileWidth),
-                    (int) (((getY()) / tileHeight))).getTile();
+                    (int) ((getX()+getWidth()) / tileWidth),
+                    (int) (((getY()+getHeight()/2) / tileHeight))).getTile();
             return tempTile.getProperties().containsKey("blocked");
         }
         return false;
@@ -139,16 +156,16 @@ public abstract class Entity extends Sprite {
         // if moving downward (negative y)
         if (dir.y < 0f) {
             tempTile = collisionLayer.getCell(
-                    (int) ((getX()) / tileWidth),
-                    (int) ((getY() - getHeight() / 2) / tileHeight)
+                    (int) ((getX()+getWidth()/2) / tileWidth),
+                    (int) ((getY()) / tileHeight)
             ).getTile();
             return tempTile.getProperties().containsKey("blocked");
         }
         // if moving upward (positive y)
         else if (dir.y > 0f) {
             tempTile = collisionLayer.getCell(
-                    (int) ((getX()) / tileWidth),
-                    (int) ((getY() + getHeight() / 2) / tileHeight)
+                    (int) ((getX()+getWidth()/2) / tileWidth),
+                    (int) ((getY() + getHeight()) / tileHeight)
             ).getTile();
             return tempTile.getProperties().containsKey("blocked");
         }

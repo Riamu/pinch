@@ -7,22 +7,21 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 
 // URGENT is marked with [*]
-// FINISHED marked with [^]
+
 // General
-// TODO make more enemies
 // [*]TODO be able to continue playing after first level
-// TODO re-work winning
 // TODO Main menu Buttons
 
 // Player
 // TODO Get better 16x16 Player image
-// [*]TODO give the player an attack
 // [*]TODO inventory / Powerups
 // [*]TODO Key and locked door mechanic
+// TODO Decide about projectile mechanics
 
-// BlobEnemy
-// TODO Better movement
-// TODO allow blob to die
+// Enemies
+// TODO Add more enemies
+    // BlobEnemy
+    // TODO Better movement
 
 public class PinchGame extends Game {
 	public SpriteBatch batch;

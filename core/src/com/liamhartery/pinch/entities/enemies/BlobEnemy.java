@@ -22,7 +22,6 @@ import com.badlogic.gdx.math.RandomXS128;
  *  50 movement speed
  *
  *  TODO better movement
- *  TODO death (actually he can die now the player just can't deal damage to him)
  *
  */
 

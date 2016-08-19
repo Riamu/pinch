@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -25,6 +24,11 @@ import com.liamhartery.pinch.screens.GameScreen;
  *  Projectiles should probably be added to an arraylist individual to the entity that spawned it as
  *  well so we can access only those projectiles that come from the player or only those projectiles
  *  that come from enemies, for damage calculating purposes.
+ *
+ *  TODO Decide whether to keep current implementation where no checks are made for layer:
+ *      Options: - Making the projectile pause like any other entity
+ *               - Destroying the projectile upon changing layers
+ *               - Keeping it the same as it currently is
  */
 public class Projectile extends Sprite{
     private Rectangle tempRect;
@@ -68,9 +72,10 @@ public class Projectile extends Sprite{
                 textureAtlas.findRegion("projectile7"),
                 textureAtlas.findRegion("projectile8")
         );
-        Gdx.app.log("Projectile Created with direction",""+direction);
     }
 
+    // currently projectiles don't actually check if they're on the current layer
+    // which actually introduces an interesting skill based combat mechanic that I might keep
     public void update(float delta){
         position.x +=delta*speed*direction.x;
         position.y+=delta*speed*direction.y;

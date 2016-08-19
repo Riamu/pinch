@@ -11,7 +11,6 @@ import com.liamhartery.pinch.screens.GameScreen;
 
 import java.util.ArrayList;
 // TODO Better player Sprite
-// TODO give the player an attack
 // TODO inventory / Powerups
 // TODO Key and locked door mechanic
 

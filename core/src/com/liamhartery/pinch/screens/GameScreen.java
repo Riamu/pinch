@@ -24,13 +24,18 @@ import com.badlogic.gdx.math.Vector3;
 import com.liamhartery.pinch.PinchGame;
 import com.liamhartery.pinch.entities.Entity;
 import com.liamhartery.pinch.entities.Player;
+import com.liamhartery.pinch.entities.Projectile;
 import com.liamhartery.pinch.entities.enemies.BlobEnemy;
+
+import java.util.ArrayList;
 
 public class GameScreen implements Screen,GestureListener,InputProcessor {
     private final PinchGame game;
     private int currentLayer = 5;
     //private Texture playerImage;
     private Player player;
+
+    private ArrayList<Projectile> projectiles;
 
     private InputMultiplexer inputMultiplexer;
     private GestureDetector gd;
@@ -52,7 +57,8 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
 
     private float invulTimer = 0;
     private boolean firstFrame = true;
-
+    private boolean attackIsOffCoolDown;
+    private float coolDownCounter = 0;
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
     // dispose any resource that needs disposing of
     @Override
@@ -65,13 +71,17 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         }
 
     }
+    public void addProjectile(Projectile newProjectile){
+        projectiles.add(newProjectile);
+    }
+    public void removeProjectile(Projectile oldProjectile){
+        projectiles.remove(oldProjectile);
+    }
     // constructor is just like the create() method
     public GameScreen(final PinchGame pinch) {
         game = pinch;
-
-        // load images
-        //playerImage = new Texture(Gdx.files.internal("entities/player2.jpg"));
-
+        attackIsOffCoolDown = true;
+        projectiles = new ArrayList<Projectile>();
         // create camera
         camera = new OrthographicCamera();
         camera.setToOrtho(false,320,180);
@@ -117,6 +127,14 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         if(player.getInvulnerable()){
             invulTimer+=delta;
         }
+
+
+        if(coolDownCounter>0){
+            coolDownCounter-=delta;
+        }else if(coolDownCounter<=0){
+            attackIsOffCoolDown = true;
+            coolDownCounter = 0;
+        }
         // elapsed time for the animation and score tracking
         elapsedTime += delta;
         Gdx.gl.glClearColor(33/255f,30/255f,39/255f,0);
@@ -141,6 +159,10 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                 player.setInvulnerable(true);
             }
         }
+        // Update all projectiles
+        for(int i=0; i<projectiles.size(); i++){
+            projectiles.get(i).update(delta);
+        }
         player.updateHearts();
 
         // Sprite Batch
@@ -154,6 +176,16 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                     game.batch.draw(tempEntity.getAnimation().getKeyFrame(elapsedTime, true),
                             tempEntity.getX(),
                             tempEntity.getY());
+                }
+            }
+            for(int i = 0; i<projectiles.size();i++){
+                Projectile tempProjectile = projectiles.get(i);
+                if(tempProjectile.getCollisionLayer()!=getCurrentLayer()){
+                    // do nothing
+                }else{
+                    game.batch.draw(tempProjectile.getAnimation().getKeyFrame(elapsedTime,true),
+                            tempProjectile.getX(),
+                            tempProjectile.getY());
                 }
             }
             // we draw the player using it's midpoint instead of bottom left
@@ -171,10 +203,8 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         //game.font.draw(game.batch,"FPS: "+1f/delta,camera.position.x+100,camera.position.y+86);
         game.batch.end();
 
-
+        // this renders bounding boxes on player and enemies
         shapeRenderer.setProjectionMatrix(camera.combined);
-
-        // Our bounding boxes are all out of whack
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(0,1,0,1);
             shapeRenderer.rect(
@@ -192,6 +222,8 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                 );
             }
         shapeRenderer.end();
+
+
         // If the screen is touched with 1 finger we move the oldPlayer towards that point
         if(Gdx.input.isTouched()){
             // If more than one finger is on the screen do nothing (most likely a pinch or zoom)
@@ -302,7 +334,6 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     // resets the longPressBool
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        longPressBool = false;
         //Gdx.app.log("touchUP","");
         return false;
     }
@@ -343,9 +374,19 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     // this will be used to attack
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
-        //Gdx.app.log("Fling performed",""+velocityX+","+velocityY);
-
-        player.attack(velocityX,velocityY);
+        Gdx.app.log("velX,velY",""+velocityX+","+velocityY);
+        if(longPressBool){
+            longPressBool=false;
+            return false;
+        }
+        if(Math.abs(velocityX)==0&&Math.abs(velocityY)==0){
+            return false;
+        }
+        if(attackIsOffCoolDown){
+            attackIsOffCoolDown = false;
+            coolDownCounter = player.getCoolDown();
+            player.attack(velocityX,velocityY);
+        }
         return false;
     }
 

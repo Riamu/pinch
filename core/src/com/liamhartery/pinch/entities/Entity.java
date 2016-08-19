@@ -104,7 +104,6 @@ public abstract class Entity extends Sprite {
 
     public void takeDamage(int dmg){
         health-=dmg;
-        Gdx.app.log("Health: ",""+health);
         if(health<=0){
             kill();
         }

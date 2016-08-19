@@ -1,7 +1,10 @@
 package com.liamhartery.pinch.entities;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -23,56 +26,73 @@ import com.liamhartery.pinch.screens.GameScreen;
  *  well so we can access only those projectiles that come from the player or only those projectiles
  *  that come from enemies, for damage calculating purposes.
  */
-public class Projectile extends Entity{
+public class Projectile extends Sprite{
     private Rectangle tempRect;
     private int damage;
     private boolean belongsToPlayer;
     private float speed;
-    private Player player;
 
+    private Animation animation;
+
+    private TextureAtlas textureAtlas;
+
+    private Vector2 direction,position,oldposition;
+
+    private TiledMapTileLayer collisionLayer;
+
+    //private Player player;
+
+    private GameScreen game;
+    // So many things in this constructor because the player has control of all of them
     public Projectile(TextureAtlas atlas, TiledMapTileLayer layer, GameScreen screen,
-                      Vector2 pos, Vector2 dir, Player player){
-        super(atlas, layer, screen, pos);
-        this.player = player;
-        setDirection(dir);
-        damage = player.getProjectileDamage(); // change to player.getProjectileDamage();
-        speed = player.getProjectileSpeed(); // change to player.getProjectileSpeed();
+                      Vector2 pos, Vector2 dir, int dmg, int spd, Player ply){
+        super(atlas.getRegions().get(0));
+        textureAtlas = atlas;
+        speed = spd;
+        direction = dir;
+        damage = dmg;
+        position = pos;
+        setPosition(position.x,position.y);
+        collisionLayer = layer;
+        game = screen;
 
-        setAnimation(new Animation(
+        animation = new Animation(
                 0.1f,
-                getTextureAtlas().findRegion("0"),
-                getTextureAtlas().findRegion("1")
-        )); // TODO get a texture atlas for this thing
-        getEntities().add(this);
+                textureAtlas.findRegion("projectile0"),
+                textureAtlas.findRegion("projectile1"),
+                textureAtlas.findRegion("projectile2"),
+                textureAtlas.findRegion("projectile3"),
+                textureAtlas.findRegion("projectile4"),
+                textureAtlas.findRegion("projectile5"),
+                textureAtlas.findRegion("projectile6"),
+                textureAtlas.findRegion("projectile7"),
+                textureAtlas.findRegion("projectile8")
+        );
+        Gdx.app.log("Projectile Created with direction",""+direction);
     }
 
     public void update(float delta){
-        getDirection();
-        setPosition(
-                getPosition().x+delta*speed*getDirection().x,
-                getPosition().y+delta*speed*getDirection().y
-        );
-        setX(getPosition().x);
-        setY(getPosition().y);
+        position.x +=delta*speed*direction.x;
+        position.y+=delta*speed*direction.y;
+        setX(position.x+delta*speed*direction.x);
+        setY(position.y+delta*speed*direction.y);
         hitSprite();
-        if(hitWall()){
+        if(offMap()){
             dispose();
         }
     }
 
     // returns true if the tile the projectile is currently in is a "blocked" tile (wall)
-    public boolean hitWall(){
-        if(getCollisionLayer().getCell((int)(getX()/getTileWidth()),(int)(getY()/getTileHeight()))
-                .getTile().getProperties().containsKey("blocked")){
+    public boolean offMap(){
+        if(collisionLayer.getCell((int)(getX()/16),(int)(getY()/16))==null){
             return true;
         }
         return false;
     }
 
     public void dispose(){
-        getEntities().remove(this);
-        getTextureAtlas().dispose();
-        getTexture().dispose();
+        game.removeProjectile(this);
+        textureAtlas.dispose();
     }
 
     // currently checks every single sprite for bounding rectangle collision
@@ -83,7 +103,15 @@ public class Projectile extends Entity{
             tempRect = Entity.getEntities().get(i).getBoundingRectangle();
             if(getBoundingRectangle().overlaps(tempRect)){
                 Entity.getEntities().get(i).takeDamage(damage);
+                game.removeProjectile(this);
             }
         }
+    }
+
+    public Animation getAnimation(){
+        return animation;
+    }
+    public TiledMapTileLayer getCollisionLayer(){
+        return collisionLayer;
     }
 }

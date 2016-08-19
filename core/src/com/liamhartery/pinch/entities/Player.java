@@ -39,7 +39,8 @@ public class Player extends Entity{
     private boolean invulnerable = false;
     private boolean hasKey = false;
 
-    // Values
+    // projectile stuff
+    private float coolDown;
     private int projectileDamage;
     private int projectileSpeed;
 
@@ -53,11 +54,11 @@ public class Player extends Entity{
         updateHearts();
         setOriginCenter();
         projectileDamage = 1;
-        projectileSpeed = 50;
+        projectileSpeed = 100;
+        coolDown = 0.5f;
 
     }
     public void update(float x, float y, float delta){
-
         Vector2 end = new Vector2(x-getHeight()/2,y-getHeight()/2);
         setPosition(getX(), getY());
         distance = getPosition().dst(end);
@@ -228,11 +229,17 @@ public class Player extends Entity{
 
         // TextureAtlas atlas, TiledMapTileLayer layer, GameScreen screen,
         //        Vector2 pos, Vector2 dir, boolean cameFromPlayer
-        Vector2 proDir = new Vector2(velX,velY);
+        Vector2 proDir = new Vector2(velX,-velY);
         proDir.nor();
-        new Projectile(getTextureAtlas(),getCollisionLayer(),getGame(),getPosition(),proDir,this);
+        Vector2 proPos = new Vector2(getPosition());
+        proPos.x+=8;
+        proPos.y+=8;
+        getGame().addProjectile(new Projectile(new TextureAtlas(Gdx.files.internal("entities/projectile/projectile.pack")),
+                getCollisionLayer(),getGame(),proPos,proDir,projectileDamage,projectileSpeed,
+                this));
     }
 
-    public int getProjectileDamage(){return projectileDamage;}
-    public int getProjectileSpeed(){return projectileSpeed;}
+    public float getCoolDown(){
+        return coolDown;
+    }
 }

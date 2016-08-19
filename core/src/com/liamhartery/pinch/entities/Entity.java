@@ -91,12 +91,14 @@ public abstract class Entity extends Sprite {
         textureAtlas = atlas;
     }
 
+    // update will almost always get an override
     public void update(float delta){
     }
     public int playerDamage(Player player){
         return 0;
     }
 
+    // attack will almost always get an override
     public void attack(){
     }
 

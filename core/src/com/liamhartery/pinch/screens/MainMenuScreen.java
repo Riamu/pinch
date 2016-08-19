@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.liamhartery.pinch.*;
 
 // TODO Main Menu Buttons!
@@ -61,7 +64,6 @@ public class MainMenuScreen extends Stage implements Screen, GestureDetector.Ges
             game.font.draw(game.batch,"Tap to begin",(screenWidth-lilWidth)/2,150);
             game.font.draw(game.batch,"Version 0.0.6",650,450);
         game.batch.end();
-
     }
 
     @Override

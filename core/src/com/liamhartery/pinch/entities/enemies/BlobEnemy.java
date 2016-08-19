@@ -74,7 +74,7 @@ public class BlobEnemy extends Entity {
     }
     public void dispose(){
         getEntities().remove(this);
-        super.dispose();
+        getTextureAtlas().dispose();
     }
 
     public int playerDamage(Player player){

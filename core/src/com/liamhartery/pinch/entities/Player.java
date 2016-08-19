@@ -39,6 +39,10 @@ public class Player extends Entity{
     private boolean invulnerable = false;
     private boolean hasKey = false;
 
+    // Values
+    private int projectileDamage;
+    private int projectileSpeed;
+
     public Player(TextureAtlas atlas, TiledMapTileLayer layer,
                   GameScreen screen, Vector2 pos){
         super(atlas,layer,screen,pos);
@@ -48,6 +52,8 @@ public class Player extends Entity{
         setHealth(20);
         updateHearts();
         setOriginCenter();
+        projectileDamage = 1;
+        projectileSpeed = 50;
 
     }
     public void update(float x, float y, float delta){
@@ -219,5 +225,14 @@ public class Player extends Entity{
         // if it collides with something we deal damage to it and kill the projectile
         //     should we check every projectile with every entity?
         //         We could do a prelim check on x and y coords for each
+
+        // TextureAtlas atlas, TiledMapTileLayer layer, GameScreen screen,
+        //        Vector2 pos, Vector2 dir, boolean cameFromPlayer
+        Vector2 proDir = new Vector2(velX,velY);
+        proDir.nor();
+        new Projectile(getTextureAtlas(),getCollisionLayer(),getGame(),getPosition(),proDir,this);
     }
+
+    public int getProjectileDamage(){return projectileDamage;}
+    public int getProjectileSpeed(){return projectileSpeed;}
 }

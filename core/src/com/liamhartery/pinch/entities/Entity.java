@@ -51,7 +51,7 @@ public abstract class Entity extends Sprite {
     private int attackDamage;
 
     // GameScreen
-    private final GameScreen gameScreen;
+    private GameScreen gameScreen;
 
     // try to make sure this constructor stays unused unless 200% necessary
     public Entity(Texture texture, TextureAtlas atlas,
@@ -279,5 +279,9 @@ public abstract class Entity extends Sprite {
                 if(tempTile.getProperties().containsKey(string))
                     return true;
         return false;
+    }
+
+    public void setGameScreen(GameScreen newGameScreen){
+        gameScreen = newGameScreen;
     }
 }

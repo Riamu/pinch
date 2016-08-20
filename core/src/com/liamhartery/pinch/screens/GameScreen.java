@@ -112,6 +112,8 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         currentLevelDir = levelDirectory;
         game = pinch;
         attackIsOffCoolDown = true;
+        longPressBool = false;
+        pinchJustStopped = false;
         projectiles = new ArrayList<Projectile>();
         // create camera
         camera = new OrthographicCamera();
@@ -123,6 +125,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         setUpTiledMap();
         // create a new Player object for the Player using the playerImage
         this.player = player;
+        player.setGameScreen(this);
         // at startup make sure the camera is centred on the player
         // otherwise some badshit(tm) can happen
         camera.position.x = startingPlayerX;
@@ -235,6 +238,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         game.batch.end();
 
         // this renders bounding boxes on player and enemies
+        /*
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.setColor(0,1,0,1);
@@ -253,6 +257,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                 );
             }
         shapeRenderer.end();
+        */
 
 
         // If the screen is touched with 1 finger we move the oldPlayer towards that point
@@ -347,8 +352,8 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     }
     public void win(){
         if(currentLevelNum<2){
-            game.setScreen(new GameScreen(game,currentLevelDir,currentLevelNum+1,player));
             dispose();
+            game.setScreen(new GameScreen(game,currentLevelDir,currentLevelNum+1,player));
         }else {
             game.setScreen(new WinScreen(game, elapsedTime));
             dispose();
@@ -423,7 +428,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
          * once the player taps nearby we ask isNextTo("lockedDoor"):
          * if the player has a key the property "lockedDoor" gets removed, and the Door
          * sprite is replaced if need be. (the key is removed from inventory of course)
-         * since the lockedDoor is no longer a property the player should be able to pass thru
+         * since the lockedDoor is no longer a property the player should be able to pass through
          */
         return false;
     }
@@ -486,6 +491,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                         }
                         // "blob" is a blob enemy
                         else if (properties.containsKey("blob")) {
+                            Gdx.app.log("found blob tile","");
                             new BlobEnemy(new TextureAtlas(Gdx.files.internal("entities/enemies/blob.pack")),
                                     (TiledMapTileLayer) tiledMap.getLayers().get(layerNum), this,
                                     new Vector2(x * layer.getTileWidth(), y * layer.getTileHeight()));

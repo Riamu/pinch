@@ -22,6 +22,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
     // BlobEnemy
     // TODO Better movement
 
+
+// Known Bugs
+// player sprite is too large
+
 public class PinchGame extends Game {
 	public SpriteBatch batch;
 	public BitmapFont bigfont;

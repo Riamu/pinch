@@ -239,7 +239,6 @@ public class Player extends Entity{
                 getCollisionLayer(),getGame(),proPos,proDir,projectileDamage,projectileSpeed,
                 this));
     }
-
     public float getCoolDown(){
         return coolDown;
     }

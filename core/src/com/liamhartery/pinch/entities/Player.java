@@ -48,8 +48,8 @@ public class Player extends Entity{
         super(atlas,layer,screen,pos);
         animationSetup();
         hearts = new ArrayList<Texture>();
-        setMaxHealth(20);
-        setHealth(20);
+        setMaxHealth(3);
+        setHealth(3);
         updateHearts();
         setOriginCenter();
         projectileDamage = 1;

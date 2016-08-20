@@ -38,7 +38,7 @@ public class InstructionsScreen implements Screen,GestureDetector.GestureListene
 
     @Override
     public boolean tap(float x, float y, int count, int button) {
-        game.setScreen(new GameScreen(game));
+        game.setScreen(new GameScreen(game,1,1));
         return false;
     }
 

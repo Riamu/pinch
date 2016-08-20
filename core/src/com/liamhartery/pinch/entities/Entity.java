@@ -255,6 +255,7 @@ public abstract class Entity extends Sprite {
     public GameScreen getGame(){
         return gameScreen;
     }
+
     public boolean isNextTo(String string){
         TiledMapTile tempTile;
         for(int i=0;i<3;i++){
@@ -267,6 +268,16 @@ public abstract class Entity extends Sprite {
                     return true;
             }
         }
+        return false;
+    }
+    public boolean isOnTile(String string){
+        TiledMapTile tempTile;
+        tempTile = getCollisionLayer().getCell(
+                (int)((getX()+getWidth()/2)/getTileWidth()),
+                (int)((getY()+getHeight()/2)/getTileHeight()))
+                .getTile();
+                if(tempTile.getProperties().containsKey(string))
+                    return true;
         return false;
     }
 }

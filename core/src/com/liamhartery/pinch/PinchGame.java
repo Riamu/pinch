@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // URGENT is marked with [*]
 
 // General
-// [*]TODO be able to continue playing after first level
 // TODO Main menu Buttons
 
 // Player

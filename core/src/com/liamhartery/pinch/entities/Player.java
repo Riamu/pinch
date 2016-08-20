@@ -54,7 +54,7 @@ public class Player extends Entity{
         setOriginCenter();
         projectileDamage = 1;
         projectileSpeed = 100;
-        coolDown = 0.5f;
+        coolDown = 0.4f;
 
     }
     public void update(float x, float y, float delta){
@@ -168,6 +168,7 @@ public class Player extends Entity{
     public Animation getAnimation(){
         return animation;
     }
+    /*
     public boolean isNextTo(String string){
         TiledMapTile tempTile;
         for(int i=0;i<3;i++){
@@ -182,6 +183,7 @@ public class Player extends Entity{
         }
         return false;
     }
+    */
     public void updateHearts(){
         //Gdx.app.log("size",""+hearts.size());
         if(hearts.size()<getMaxHealth()){

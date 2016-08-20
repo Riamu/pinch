@@ -261,7 +261,7 @@ public abstract class Entity extends Sprite {
             for(int j=0;j<3;j++){
                 tempTile = getCollisionLayer().getCell(
                         (int)(getX()/getTileWidth()-1+i),
-                        (int)(getY()/getTileHeight()-1+j))
+                        (int)(getY()/getTileHeight()+1+j))
                         .getTile();
                 if(tempTile.getProperties().containsKey(string))
                     return true;

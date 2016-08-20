@@ -23,7 +23,8 @@ import com.liamhartery.pinch.screens.GameScreen;
  *
  *  Projectiles should probably be added to an arraylist individual to the entity that spawned it as
  *  well so we can access only those projectiles that come from the player or only those projectiles
- *  that come from enemies, for damage calculating purposes.
+ *  that come from enemies, for damage calculating purposes. We could also just have to different
+ *  classes for enemy projectiles and player projectiles
  *
  *  TODO Decide whether to keep current implementation where no checks are made for layer:
  *      Options: - Making the projectile pause like any other entity

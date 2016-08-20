@@ -58,6 +58,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     private float invulTimer = 0;
     private boolean firstFrame = true;
     private boolean attackIsOffCoolDown;
+    private boolean pinchJustStopped = false;
     private float coolDownCounter = 0;
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
     // dispose any resource that needs disposing of
@@ -107,7 +108,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
 
         // set the gesture detector and input processor to that gesture detector
         gd = new GestureDetector(this);
-        gd.setLongPressSeconds(0.05f);
+        gd.setLongPressSeconds(0.1f);
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(gd);
         inputMultiplexer.addProcessor(this);
@@ -127,7 +128,6 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         if(player.getInvulnerable()){
             invulTimer+=delta;
         }
-
 
         if(coolDownCounter>0){
             coolDownCounter-=delta;
@@ -349,18 +349,19 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     @Override
     public boolean zoom(float initialDistance, float distance) {
         pinchDistance = initialDistance-distance;
-        return false;
+        return true;
     }
     // actually doesn't do anything
     @Override
     public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2,
                          Vector2 pointer1, Vector2 pointer2) {
-        return false;
+        return true;
     }
     // calls the changeFloor method with the distance determined in the zoom method
     @Override
     public void pinchStop(){
         changeFloor(pinchDistance);
+        pinchJustStopped = true;
     }
 
     // when the user taps the game checks the spaces all around the player for a win
@@ -368,24 +369,50 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     @Override
     public boolean tap(float x, float y, int count, int button) {
         if(player.isNextTo("win"))win();
+
+        /* Locked door logic
+         * there will be tile with property "lockedDoor" and the property "blocked" in the loading phase
+         * this will have a Door object put under it (type of entity where its update method does
+         * nothing?)
+         * once the player taps nearby we ask isNextTo("lockedDoor"):
+         * if the player has a key the property "lockedDoor" gets removed, and the Door
+         * sprite is replaced if need be. (the key is removed from inventory of course)
+         * since the lockedDoor is no longer a property the player should be able to pass thru
+         */
         return false;
     }
 
     // this will be used to attack
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
-        Gdx.app.log("velX,velY",""+velocityX+","+velocityY);
+        // if a pinch just stopped then we don't want to attack
+        if(pinchJustStopped){
+            return false;
+        }
+        // also if the thing is long pressed we don't want to attack
         if(longPressBool){
             longPressBool=false;
             return false;
         }
+        // ALSO ALSO if the velocity of our fling is 0 we don't want to attack
         if(Math.abs(velocityX)==0&&Math.abs(velocityY)==0){
             return false;
         }
+        // FINALLY if the attack is off cool down we can attack
         if(attackIsOffCoolDown){
             attackIsOffCoolDown = false;
             coolDownCounter = player.getCoolDown();
             player.attack(velocityX,velocityY);
+        }
+        return false;
+    }
+
+    // when a touchDown event is registered the pinchJustStopped boolean is false, this prevents
+    // flings from being registered after pinch and zoom gestures
+    @Override
+    public boolean touchDown(float x, float y, int pointer, int button) {
+        if(pinchJustStopped){
+            pinchJustStopped=false;
         }
         return false;
     }
@@ -396,11 +423,14 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
 
     // put anything that's in the tiledMap that needs a sprite in here
     public void setUpTiledMap(){
+        // three nested for loops to iterate through every layer, and every x,y coordinate on each
         for(int layerNum=0;layerNum<tiledMap.getLayers().getCount();layerNum++) {
             TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(layerNum);
             for(int x=0;x<layer.getWidth();x++){
                 for(int y=0;y<layer.getHeight();y++){
                     TiledMapTileLayer.Cell cell = layer.getCell(x,y);
+                    // if the cell is null we need to break so we don't get a null pointer exception
+                    // when trying to find out what properties it has
                     if(cell==null)break;
                     MapProperties properties = cell.getTile().getProperties();
                     // "start" is the player starting position property
@@ -415,6 +445,10 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                                 (TiledMapTileLayer)tiledMap.getLayers().get(layerNum),this,
                                 new Vector2(x*layer.getTileWidth(),y*layer.getTileHeight()));
                     }
+                    // key
+                    // lockedDoor
+                    // other enemies
+                    // powerUpChest
                 }
             }
         }
@@ -441,11 +475,6 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     @Override
     public void resize(int x, int y){
 
-    }
-
-    @Override
-    public boolean touchDown(float x, float y, int pointer, int button) {
-        return false;
     }
 
     @Override

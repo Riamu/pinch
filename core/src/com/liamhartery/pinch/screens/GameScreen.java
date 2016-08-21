@@ -7,7 +7,6 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
@@ -18,10 +17,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.liamhartery.pinch.PinchGame;
+import com.liamhartery.pinch.entities.Chest;
 import com.liamhartery.pinch.entities.Entity;
 import com.liamhartery.pinch.entities.Player;
 import com.liamhartery.pinch.entities.Projectile;
@@ -29,6 +28,7 @@ import com.liamhartery.pinch.entities.enemies.BlobEnemy;
 
 import java.util.ArrayList;
 
+// TODO better commenting
 public class GameScreen implements Screen,GestureListener,InputProcessor {
     private final PinchGame game;
     private int currentLayer = 5;
@@ -108,6 +108,9 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         Gdx.input.setInputProcessor(inputMultiplexer);
     }
     public GameScreen(final PinchGame pinch, int levelDirectory, int levelNum, Player player) {
+        player.setMaxHealth(player.getMaxHealth()+1);
+        player.setHealth(player.getMaxHealth());
+        player.updateHearts();
         currentLevelNum = levelNum;
         currentLevelDir = levelDirectory;
         game = pinch;
@@ -351,6 +354,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         }
     }
     public void win(){
+        // TODO make more levels so we can change this number to 5
         if(currentLevelNum<2){
             dispose();
             game.setScreen(new GameScreen(game,currentLevelDir,currentLevelNum+1,player));
@@ -421,6 +425,30 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     public boolean tap(float x, float y, int count, int button) {
         if(player.isNextTo("win"))win();
 
+        // we check if the player is next to any of the following
+        if(player.isNextTo("chest")){
+            // they're all entities so we need to go through the entity arraylist to find them
+            for(int i=0;i<Entity.getEntities().size();i++){
+                // if we find a chest do the following
+                if(Entity.getEntities().get(i) instanceof Chest){
+                    // cast the entity to a chest
+                    Chest tempChest = (Chest)Entity.getEntities().get(i);
+                    // are the player and chest colliding? if they are and also on the same level
+                    // open the chest and give the player an item from it
+                    if(tempChest.getBoundingRectangle().overlaps(player.getBoundingRectangle())&&
+                            player.getCollisionLayer().equals(tempChest.getCollisionLayer())) {
+                        tempChest.openChest();
+                        // TODO comment out above line and replace with below line once powerups are in
+                        // player.giveItem(tempChest.openChest());
+                        // or maybe
+                        // player.givePowerUp(tempChest.openChest());
+                        // can the giveItem method take a String sometimes instead to give a specific item?
+                        // of course it can silly. This is Java(tm)
+                    }
+
+                }
+            }
+        }
         /* Locked door logic
          * there will be tile with property "lockedDoor" and the property "blocked" in the loading phase
          * this will have a Door object put under it (type of entity where its update method does
@@ -454,6 +482,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
             attackIsOffCoolDown = false;
             coolDownCounter = player.getCoolDown();
             player.attack(velocityX,velocityY);
+
         }
         return false;
     }
@@ -488,10 +517,14 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                             startingPlayerX = x * layer.getTileWidth();
                             startingPlayerY = y * layer.getTileHeight();
                             currentLayer = layerNum;
+                        }else if(properties.containsKey("chest")){
+                            new Chest(new TextureAtlas(Gdx.files.internal("entities/chest/chest.pack")),
+                                    (TiledMapTileLayer)tiledMap.getLayers().get(layerNum),this,
+                                    new Vector2(x*layer.getTileWidth(),y*layer.getTileHeight())
+                                    );
                         }
                         // "blob" is a blob enemy
                         else if (properties.containsKey("blob")) {
-                            Gdx.app.log("found blob tile","");
                             new BlobEnemy(new TextureAtlas(Gdx.files.internal("entities/enemies/blob.pack")),
                                     (TiledMapTileLayer) tiledMap.getLayers().get(layerNum), this,
                                     new Vector2(x * layer.getTileWidth(), y * layer.getTileHeight()));

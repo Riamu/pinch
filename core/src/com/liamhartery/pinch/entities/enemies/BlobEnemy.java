@@ -14,10 +14,10 @@ import com.badlogic.gdx.math.RandomXS128;
 /*
  * The blob enemy is a very simple enemy that moves more or less randomly
  * The blob enemy does damage to the player when it touches him
- * it doesn't do much damage but it has 3 hp
+ * it does very little damage and can be killed easily
  *
  * Stats:
- *  3hp
+ *  1hp
  *  1dmg
  *  50 movement speed
  *
@@ -33,8 +33,8 @@ public class BlobEnemy extends Entity {
     public BlobEnemy( TextureAtlas atlas, TiledMapTileLayer layer,
                      GameScreen gameScreen, Vector2 position){
         super(atlas,layer,gameScreen,position);
-        setMaxHealth(3);
-        setHealth(3);
+        setMaxHealth(1);
+        setHealth(1);
         setPosition(position);
         setDirection(1,1);
         chooseDirection();

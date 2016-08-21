@@ -25,12 +25,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 // Known Bugs
 // player sprite is too large
+// timer isn't working properly
 
 public class PinchGame extends Game {
 	public SpriteBatch batch;
 	public BitmapFont bigfont;
 	public BitmapFont font;
-
 	@Override
 	public void create () {
 		batch = new SpriteBatch();

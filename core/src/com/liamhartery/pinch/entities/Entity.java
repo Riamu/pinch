@@ -53,26 +53,9 @@ public abstract class Entity extends Sprite {
     // GameScreen
     private GameScreen gameScreen;
 
-    // try to make sure this constructor stays unused unless 200% necessary
-    public Entity(Texture texture, TextureAtlas atlas,
-                  TiledMapTileLayer layer, GameScreen screen, Vector2 pos){
-        super(texture);
-        dir = new Vector2(0,0);
-        oldPosition = new Vector2(0,0);
-        collisionLayer = layer;
-        gameScreen = screen;
-        tileWidth = collisionLayer.getTileWidth();
-        tileHeight = collisionLayer.getTileHeight();
-        maxHealth = 3;
-        health = maxHealth;
-        attackDamage = 1;
-        position = pos;
-        textureAtlas = atlas;
-    }
-
     // this is the only constructor that should be used in most cases
     public Entity(TextureAtlas atlas,TiledMapTileLayer layer, GameScreen screen, Vector2 pos){
-        // it calls the sprite constructor with an atlas region so hit boxes are better
+        // Calls the sprite constructor with an atlas region so hit boxes are better
         super(atlas.getRegions().get(0));
         dir = new Vector2(0,0);
         oldPosition = new Vector2(0,0);
@@ -94,6 +77,9 @@ public abstract class Entity extends Sprite {
     // update will almost always get an override
     public void update(float delta){
     }
+
+    // by default entities cannot damage the player
+    // this needs to be defined in the derived class
     public int playerDamage(Player player){
         return 0;
     }
@@ -102,6 +88,8 @@ public abstract class Entity extends Sprite {
     public void attack(){
     }
 
+    // entities can take damage and die by default. If this is not wanted behaviour please override
+    // (chests, keys, doors)
     public void takeDamage(int dmg){
         health-=dmg;
         if(health<=0){
@@ -109,36 +97,41 @@ public abstract class Entity extends Sprite {
         }
     }
 
-    public void setHealth(){
-    }
-
+    // removes the entity from entities and gets rid of the textureAtlas
     public void dispose(){
         textureAtlas.dispose();
-        entities.clear();
+        entities.remove(this);
 
     }
+
+    // add int health to current health
     public void addHealth(int health){
         this.health += health;
         if(health>maxHealth){
             this.health = maxHealth;
         }
     }
+
+    // kill is literally a wrapper for dispose();
     public void kill(){
-        entities.remove(this);
         dispose();
     }
 
+    // set max possible health
     public void setMaxHealth(int newMaxHealth){
         maxHealth = newMaxHealth;
     }
 
+    // static method that returns the entities arraylist for manipulation
     public static ArrayList<Entity> getEntities(){
         return entities;
     }
 
+    // wall x collision detection
     public boolean collisionDetectionX(){
         // towards left
         if (dir.x < 0f) {
+            // we basically ask it for the tile at a certain location and return true if blocked
             tempTile = collisionLayer.getCell(
                     (int) ((getX())/tileWidth),
                     (int) (((getY()+getHeight()/2)/tileHeight))).getTile();
@@ -153,6 +146,7 @@ public abstract class Entity extends Sprite {
         }
         return false;
     }
+    // wall y collision detection
     public boolean collisionDetectionY(){
         // if moving downward (negative y)
         if (dir.y < 0f) {
@@ -231,6 +225,11 @@ public abstract class Entity extends Sprite {
         }
         health = newHealth;
     }
+    public int getMaxHealth(){
+        return maxHealth;
+    }
+
+    // tiled map getter and setter stuff
     public TiledMapTileLayer getCollisionLayer(){
         return collisionLayer;
     }
@@ -243,19 +242,24 @@ public abstract class Entity extends Sprite {
     public void updateLayer(TiledMapTileLayer newLayer){
         collisionLayer = newLayer;
     }
-    public int getMaxHealth(){
-        return maxHealth;
-    }
+
+    // Animation getter setter
     public Animation getAnimation(){
         return animation;
     }
     public void setAnimation(Animation newAnimation){
         animation = newAnimation;
     }
+
+    // game getter setter
     public GameScreen getGame(){
         return gameScreen;
     }
+    public void setGameScreen(GameScreen newGameScreen){
+        gameScreen = newGameScreen;
+    }
 
+    // is next to returns true if the entity is next to a tile with the property string
     public boolean isNextTo(String string){
         TiledMapTile tempTile;
         for(int i=0;i<3;i++){
@@ -270,6 +274,8 @@ public abstract class Entity extends Sprite {
         }
         return false;
     }
+
+    // returns true if the tile that the entity is on has the property string
     public boolean isOnTile(String string){
         TiledMapTile tempTile;
         tempTile = getCollisionLayer().getCell(
@@ -279,9 +285,5 @@ public abstract class Entity extends Sprite {
                 if(tempTile.getProperties().containsKey(string))
                     return true;
         return false;
-    }
-
-    public void setGameScreen(GameScreen newGameScreen){
-        gameScreen = newGameScreen;
     }
 }

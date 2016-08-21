@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
 import com.liamhartery.pinch.screens.GameScreen;
@@ -46,12 +45,20 @@ public class Player extends Entity{
     public Player(TextureAtlas atlas, TiledMapTileLayer layer,
                   GameScreen screen, Vector2 pos){
         super(atlas,layer,screen,pos);
+
+        // this is a method that sets up player animations for us
         animationSetup();
+        // get our hearts ArrayList ready
         hearts = new ArrayList<Texture>();
+        // when we have a new player it's clearly the start of a set of levels so health should be
+        // at its minimum value
         setMaxHealth(3);
         setHealth(3);
+        // updateHearts will update the hearts ArrayList because our max and current health changed
         updateHearts();
+        // not sure if this line does anything, will figure that out eventually
         setOriginCenter();
+        // projectile variables!
         projectileDamage = 1;
         projectileSpeed = 100;
         coolDown = 0.4f;
@@ -60,10 +67,9 @@ public class Player extends Entity{
     public void update(float x, float y, float delta){
         Vector2 end = new Vector2(x-getHeight()/2,y-getHeight()/2);
         setPosition(getX(), getY());
-        distance = getPosition().dst(end);
-
         // Speed is relative to how far away you touch. (for more precise control)
         // We also cap the speed
+        distance = getPosition().dst(end);
         speed = distance * 3;
         if (speed > 150) {
             speed = 150;
@@ -91,14 +97,14 @@ public class Player extends Entity{
         // finally once we've done all our math set X and Y to the position vector
         setX(getPosition().x);
         setY(getPosition().y);
-        getBoundingRectangle().setSize(500);
-        updateHearts();
+        //updateHearts(); // I don't think this needs to be done
     }
 
     public void animationSetup(){
-        setTextureAtlas(new TextureAtlas(
-                Gdx.files.internal("entities/charles/charles.pack")));
+        // to avoid making too many calls to getTextureAtlas() we make a temp one
         TextureAtlas tempTextureAtlas = getTextureAtlas();
+
+        // here we just set up our different animations
         downAnimation = new Animation(0.1f,
                 tempTextureAtlas.findRegion("4"),
                 tempTextureAtlas.findRegion("14"),
@@ -126,9 +132,11 @@ public class Player extends Entity{
         idleAnimation = new Animation(0,
                 tempTextureAtlas.findRegion("4")
         );
+        // by default our animation is idle of course
         animation = idleAnimation;
     }
     // called whenever the player moves
+    // basically just calls animation = (whatever animation corresponds to direction)
     private void animate(){
 
         // if x,y are positive
@@ -161,7 +169,7 @@ public class Player extends Entity{
             }
         }
     }
-
+    // sets current animation to idle
     public void setIdle(){
         animation = idleAnimation;
     }
@@ -184,21 +192,26 @@ public class Player extends Entity{
         return false;
     }
     */
+
+    // update the hearts texture array
     public void updateHearts(){
-        //Gdx.app.log("size",""+hearts.size());
+        // this changes how many slots we have in the hearts ArrayList
         if(hearts.size()<getMaxHealth()){
-            for(int i=0;i<getMaxHealth();i++){
+            for(int i=hearts.size();i<getMaxHealth();i++){
                 hearts.add(i,emptyHeartTexture);
             }
         }
+        // we make sure that we have enough filled hearts
         for(int i=0;i<getHealth();i++){
             hearts.set(i,heartTexture);
         }
+        // any damage is represented with an empty heart texture
         for(int i=getHealth();i<getMaxHealth();i++){
             hearts.set(i,emptyHeartTexture);
         }
     }
 
+    // return the hearts ArrayList
     public ArrayList<Texture> getHearts(){
         return hearts;
     }
@@ -206,7 +219,6 @@ public class Player extends Entity{
     public float getSpeed(){
         return speed;
     }
-
     public void setInvulnerable(boolean state){
         invulnerable = state;
     }
@@ -214,22 +226,19 @@ public class Player extends Entity{
         return invulnerable;
     }
 
+    // take damage only if not invulnerable
     public void takeDamage(int dmg){
         if(!invulnerable){
             setHealth(getHealth()-dmg);
         }
     }
+
+    // the attack method
     public void attack(float velX, float velY){
-        // Find the direction the fling occured in dir = new Vector2(velocityX,velocityY)
-        // Normalize the direction vector dir.nor()
-        // Spawn a new projectile at the player's position and add it to the projectile list
-        // it will then move towards the normalized direction vector
         // if it collides with something we deal damage to it and kill the projectile
         //     should we check every projectile with every entity?
         //         We could do a prelim check on x and y coords for each
-
-        // TextureAtlas atlas, TiledMapTileLayer layer, GameScreen screen,
-        //        Vector2 pos, Vector2 dir, boolean cameFromPlayer
+        // TODO be able to shoot more than 1 projectile from you at once as a powerup
         Vector2 proDir = new Vector2(velX,-velY);
         proDir.nor();
         Vector2 proPos = new Vector2(getPosition());
@@ -239,6 +248,8 @@ public class Player extends Entity{
                 getCollisionLayer(),getGame(),proPos,proDir,projectileDamage,projectileSpeed,
                 this));
     }
+
+    // returns the coolDown time for attacks
     public float getCoolDown(){
         return coolDown;
     }

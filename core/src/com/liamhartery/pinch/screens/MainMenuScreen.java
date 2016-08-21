@@ -28,6 +28,7 @@ public class MainMenuScreen extends Stage implements Screen, GestureDetector.Ges
     @Override
     public void dispose(){
     }
+
     public MainMenuScreen(final PinchGame pinch){
         game = pinch;
         // camera stuff
@@ -56,9 +57,11 @@ public class MainMenuScreen extends Stage implements Screen, GestureDetector.Ges
 
         // update the camera and look at stuff using the camera
         camera.update();
+
         // game is called because we use the batch created in PinchGame
         game.batch.setProjectionMatrix(camera.combined);
 
+        // draw our fonts
         game.batch.begin();
             game.bigfont.draw(game.batch, "p i n c h",(screenWidth-bigWidth)/2,280);
             game.font.draw(game.batch,"Tap to begin",(screenWidth-lilWidth)/2,150);
@@ -66,12 +69,17 @@ public class MainMenuScreen extends Stage implements Screen, GestureDetector.Ges
         game.batch.end();
     }
 
+    // if tapped we go to the instructions screen
+    // TODO replace instructions screen with select screen
+    // TODO make this a splash screen not a mainmenu
     @Override
     public boolean tap(float x, float y, int count, int button) {
         game.setScreen(new InstructionsScreen(game));
         dispose();
         return false;
     }
+
+
 
     /*
      * Unused

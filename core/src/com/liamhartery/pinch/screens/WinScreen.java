@@ -14,7 +14,10 @@ public class WinScreen implements Screen,GestureDetector.GestureListener {
     private int screenWidth, screenHeight;
     private GlyphLayout bigLayout,lilLayout;
     private OrthographicCamera camera;
+
+    // time in this case is the player's final time
     private float time;
+
     public WinScreen(final PinchGame pinch, float time) {
         game = pinch;
 
@@ -42,6 +45,8 @@ public class WinScreen implements Screen,GestureDetector.GestureListener {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
+
+        // draw e'erythang
         game.batch.begin();
             game.bigfont.draw(game.batch,bigLayout,(screenWidth-bigLayout.width)/2,280);
             lilLayout = new GlyphLayout(game.font,"Final Time: "+time);
@@ -49,11 +54,6 @@ public class WinScreen implements Screen,GestureDetector.GestureListener {
             lilLayout = new GlyphLayout(game.font,"Tap to return to menu, long-press to exit");
             game.font.draw(game.batch,"Tap to return to menu, long-press to exit",(screenWidth-lilLayout.width)/2,160);
         game.batch.end();
-    }
-
-    @Override
-    public boolean touchDown(float x, float y, int pointer, int button) {
-        return false;
     }
 
     @Override
@@ -67,6 +67,14 @@ public class WinScreen implements Screen,GestureDetector.GestureListener {
     public boolean longPress(float x, float y) {
         dispose();
         Gdx.app.exit();
+        return false;
+    }
+
+    /*
+     * unused
+     */
+    @Override
+    public boolean touchDown(float x, float y, int pointer, int button) {
         return false;
     }
 

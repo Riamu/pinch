@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.liamhartery.pinch.PinchGame;
 
 /*
- * This is the screen that is shown when the player loses all his health
+ * This is the screen that is shown when the player loses all his health or falls off cliff
  * usually called through the lose() method in GameScreen
  */
 public class LoseScreen implements Screen, GestureDetector.GestureListener {
@@ -29,7 +29,7 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
         camera = new OrthographicCamera();
         camera.setToOrtho(false,screenWidth,screenHeight);
 
-        // this is so we can fix fonts up nice
+        // interestingly we only need one GlyphLayour because our strings are the same length
         bigLayout = new GlyphLayout(game.bigfont,"g a m e");
         bigWidth = bigLayout.width;
 
@@ -42,14 +42,16 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
     public void render(float delta) {
         Gdx.gl.glClearColor(33/255f,30/255f,39/255f,0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         // update the camera and look at stuff using the camera
         camera.update();
         // game is called because we use the batch created in PinchGame
         game.batch.setProjectionMatrix(camera.combined);
+
+        // I'm really getting sick of commenting game.batch Seriously you should know how this works
         game.batch.begin();
             game.bigfont.draw(game.batch,"g a m e",(screenWidth-bigWidth)/2,320);
             game.bigfont.draw(game.batch,"o v e r",(screenWidth-bigWidth)/2,260);
-
             lilLayout = new GlyphLayout(game.font,"Tap to return to the main menu");
             lilWidth = lilLayout.width;
             game.font.draw(game.batch,"Tap to return to the main menu",(screenWidth-lilWidth)/2,180);
@@ -74,7 +76,7 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
 
 
     /*
-     * Unused Methods
+     * unused
      */
 
     @Override

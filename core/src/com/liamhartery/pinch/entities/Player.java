@@ -5,7 +5,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
+import com.liamhartery.pinch.items.HealthUp;
+import com.liamhartery.pinch.items.Item;
+import com.liamhartery.pinch.items.ProjectileDamageUp;
+import com.liamhartery.pinch.items.ProjectileTTKUp;
 import com.liamhartery.pinch.screens.GameScreen;
 
 import java.util.ArrayList;
@@ -37,15 +42,21 @@ public class Player extends Entity{
     private boolean invulnerable = false;
     private boolean hasKey = false;
 
-    // projectile stuff
+    // projectile stuff (TTK = time to kill)
     private float coolDown;
     private int projectileDamage;
     private int projectileSpeed;
+    private float projectileTTK;
+
+    // items stuff
+    private ArrayList<Item> items = new ArrayList<Item>();
+    RandomXS128 random = new RandomXS128();
+
+    private float elapsedTime = 0;
 
     public Player(TextureAtlas atlas, TiledMapTileLayer layer,
                   GameScreen screen, Vector2 pos){
         super(atlas,layer,screen,pos);
-
         // this is a method that sets up player animations for us
         animationSetup();
         // get our hearts ArrayList ready
@@ -61,6 +72,7 @@ public class Player extends Entity{
         // projectile variables!
         projectileDamage = 1;
         projectileSpeed = 100;
+        projectileTTK = 1;
         coolDown = 0.4f;
 
     }
@@ -245,12 +257,43 @@ public class Player extends Entity{
         proPos.x+=8;
         proPos.y+=8;
         getGame().addProjectile(new Projectile(new TextureAtlas(Gdx.files.internal("entities/projectile/projectile.pack")),
-                getCollisionLayer(),getGame(),proPos,proDir,projectileDamage,projectileSpeed,
+                getCollisionLayer(),getGame(),proPos,proDir,projectileDamage,projectileSpeed,projectileTTK,
                 this));
     }
+    // Receive a random buff/item
+    public void receiveRandomItem(){
+        int randomInt = random.nextInt(3);
 
+        // TODO add textures to a texture list to represent the items
+        if(randomInt==0){
+            //Gdx.app.log("Player got","Health up");
+            items.add(new HealthUp(this));
+        }else if(randomInt==1){
+            //Gdx.app.log("Player got","Damage up");
+            items.add(new ProjectileDamageUp(this));
+        }else if(randomInt==2){
+            //Gdx.app.log("Player got","TTK up");
+            items.add(new ProjectileTTKUp(this));
+        }
+    }
     // returns the coolDown time for attacks
     public float getCoolDown(){
         return coolDown;
     }
+    public void setCoolDown(float newCoolDown){
+        coolDown = newCoolDown;
+    }
+    public void setProjectileTTK(float newTTK){
+        projectileTTK = newTTK;
+    }
+    public float getProjectileTTK(){
+        return projectileTTK;
+    }
+    public int getProjectileDamage(){
+        return projectileDamage;
+    }
+    public void setProjectileDamage(int dmg){
+        projectileDamage = dmg;
+    }
+    public float getElapsedTime(){return elapsedTime;}
 }

@@ -48,9 +48,10 @@ public class WinScreen implements Screen,GestureDetector.GestureListener {
 
         // draw e'erythang
         game.batch.begin();
+            game.font.getData().setScale(0.5f);
             game.bigfont.draw(game.batch,bigLayout,(screenWidth-bigLayout.width)/2,280);
             lilLayout = new GlyphLayout(game.font,"Final Time: "+time);
-            game.font.draw(game.batch,"Final Time: "+time,(screenWidth-lilLayout.width)/2,200);
+            //game.font.draw(game.batch,"Final Time: "+time,(screenWidth-lilLayout.width)/2,200);
             lilLayout = new GlyphLayout(game.font,"Tap to return to menu, long-press to exit");
             game.font.draw(game.batch,"Tap to return to menu, long-press to exit",(screenWidth-lilLayout.width)/2,160);
         game.batch.end();

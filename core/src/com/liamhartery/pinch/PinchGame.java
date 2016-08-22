@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 // Player
 // TODO Get better 16x16 Player image
-// [*]TODO inventory / Powerups
 // [*]TODO Key and locked door mechanic
 // TODO Decide about projectile mechanics
 
@@ -27,6 +26,15 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // player sprite is too large
 // timer isn't working properly
 
+/*
+ * Changes in this version:
+ *     Projectile is now on a death timer
+ *     Re-organized some more code
+ *     Fixed Projectiles colliding with things on different layers from it
+ *     Added items, chests will now give you a randomly chosen item from all possible items
+ *         might change this so certain items are more common than others but the current system is
+ *         fine for now
+ */
 public class PinchGame extends Game {
 	public SpriteBatch batch;
 	public BitmapFont bigfont;

@@ -29,7 +29,7 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
         camera = new OrthographicCamera();
         camera.setToOrtho(false,screenWidth,screenHeight);
 
-        // interestingly we only need one GlyphLayour because our strings are the same length
+        // interestingly we only need one GlyphLayout because our strings are the same length
         bigLayout = new GlyphLayout(game.bigfont,"g a m e");
         bigWidth = bigLayout.width;
 
@@ -50,6 +50,7 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
 
         // I'm really getting sick of commenting game.batch Seriously you should know how this works
         game.batch.begin();
+            game.font.getData().setScale(0.5f);
             game.bigfont.draw(game.batch,"g a m e",(screenWidth-bigWidth)/2,320);
             game.bigfont.draw(game.batch,"o v e r",(screenWidth-bigWidth)/2,260);
             lilLayout = new GlyphLayout(game.font,"Tap to return to the main menu");

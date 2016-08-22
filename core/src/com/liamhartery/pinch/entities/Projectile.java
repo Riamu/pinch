@@ -37,6 +37,9 @@ public class Projectile extends Sprite{
     private boolean belongsToPlayer;
     private float speed;
 
+    private float elapsedTime;
+    private float TTK;
+
     private Animation animation;
 
     private TextureAtlas textureAtlas;
@@ -50,8 +53,9 @@ public class Projectile extends Sprite{
     private GameScreen game;
     // So many things in this constructor because the player has control of all of them
     public Projectile(TextureAtlas atlas, TiledMapTileLayer layer, GameScreen screen,
-                      Vector2 pos, Vector2 dir, int dmg, int spd, Player ply){
+                      Vector2 pos, Vector2 dir, int dmg, int spd,float ttk, Player ply){
         super(atlas.getRegions().get(0));
+        //Gdx.app.log("projectile created","");
         textureAtlas = atlas;
         speed = spd;
         direction = dir;
@@ -59,8 +63,9 @@ public class Projectile extends Sprite{
         position = pos;
         setPosition(position.x,position.y);
         collisionLayer = layer;
+        elapsedTime = 0;
         game = screen;
-
+        TTK = ttk;
         animation = new Animation(
                 0.1f,
                 textureAtlas.findRegion("projectile0"),
@@ -78,6 +83,10 @@ public class Projectile extends Sprite{
     // currently projectiles don't actually check if they're on the current layer
     // which actually introduces an interesting skill based combat mechanic that I might keep
     public void update(float delta){
+        elapsedTime+=delta;
+        if(elapsedTime>TTK){
+            dispose();
+        }
         position.x +=delta*speed*direction.x;
         position.y+=delta*speed*direction.y;
         setX(position.x+delta*speed*direction.x);
@@ -107,7 +116,8 @@ public class Projectile extends Sprite{
     public void hitSprite(){
         for(int i=0;i<Entity.getEntities().size();i++){
             tempRect = Entity.getEntities().get(i).getBoundingRectangle();
-            if(getBoundingRectangle().overlaps(tempRect)){
+            if(getBoundingRectangle().overlaps(tempRect)
+                    && this.getCollisionLayer()==Entity.getEntities().get(i).getCollisionLayer()){
                 Entity.getEntities().get(i).takeDamage(damage);
                 game.removeProjectile(this);
             }

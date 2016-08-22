@@ -46,11 +46,15 @@ public class InstructionsScreen implements Screen,GestureDetector.GestureListene
         game.batch.begin();
             game.bigfont.draw(game.batch, "instructions",(screenWidth-bigWidth)/2,450);
             game.font.draw(game.batch,"1. George will follow your finger",20,370);
-            game.font.draw(game.batch,"2. Pinching will make you go up one floor",20,340);
-            game.font.draw(game.batch,"3. Zooming will make you go down one floor",20,310);
-            game.font.draw(game.batch,"4. Tap the screen to interact with things next to you",20,280);
-            game.font.draw(game.batch,"5. Win by tapping while standing next to the door",20,250);
-            game.font.draw(game.batch,"6. Tap now to play",20,220);
+            game.font.draw(game.batch,"2. Pinching will make George go up one floor",20,340);
+            game.font.draw(game.batch,"3. Zooming will make George go down one floor",20,310);
+            game.font.draw(game.batch,"4. Tap the screen to interact with chests when George is close enough",20,280);
+            game.font.draw(game.batch,"5. George will attack if you fling in the direction you want him to attack",20,250);
+            game.font.draw(game.batch,"6. Win by tapping while standing next to the door",20,220);
+            game.font.draw(game.batch,"7. This is a puzzle game, there is always a solution and no guesswork should be required",20,190);
+            game.font.draw(game.batch,"8. Chests give you powerups, although they aren't immediately apparent",20,160);
+            game.font.draw(game.batch,"I can be contacted at liamhartery@gmail.com",20,80);
+            game.font.draw(game.batch,"Please do note that there are a few missing features (namely a key/locked door mechanic)",20,50);
             // License: https://creativecommons.org/licenses/by/3.0/
             game.font.draw(game.batch,"Character by Sheep: http://opengameart.org/users/sheep",20,20);
         game.batch.end();

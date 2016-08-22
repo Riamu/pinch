@@ -80,7 +80,7 @@ public abstract class Entity extends Sprite {
 
     // by default entities cannot damage the player
     // this needs to be defined in the derived class
-    public int playerDamage(Player player){
+    public int playerDamage(){
         return 0;
     }
 
@@ -265,8 +265,8 @@ public abstract class Entity extends Sprite {
         for(int i=0;i<3;i++){
             for(int j=0;j<3;j++){
                 tempTile = getCollisionLayer().getCell(
-                        (int)(getX()/getTileWidth()-1+i),
-                        (int)(getY()/getTileHeight()+1+j))
+                        (int)((getX()+getWidth()/2)/getTileWidth()-1+i),
+                        (int)((getY()+getHeight()/2)/getTileHeight()-1+j))
                         .getTile();
                 if(tempTile.getProperties().containsKey(string))
                     return true;

@@ -76,13 +76,8 @@ public class BlobEnemy extends Entity {
         getTextureAtlas().dispose();
     }
 
-    public int playerDamage(Player player){
-        if(player.getCollisionLayer()==this.getCollisionLayer()) {
-            if (player.getBoundingRectangle().overlaps(this.getBoundingRectangle())) {
-                return damage;
-            }
-        }
-        return 0;
+    public int playerDamage(){
+        return damage;
     }
 
 }

@@ -42,7 +42,7 @@ public class MainMenuScreen extends Stage implements Screen, GestureDetector.Ges
         game.font.getData().setScale(0.5f,0.5f);
         bigLayout = new GlyphLayout(game.bigfont,"p i n c h");
         bigWidth = bigLayout.width;
-        lilLayout = new GlyphLayout(game.font,"Tap to begin");
+        lilLayout = new GlyphLayout(game.font,"Tap to begin the 3 level demo");
         lilWidth = lilLayout.width;
 
         // This is so we can use gestures
@@ -64,8 +64,8 @@ public class MainMenuScreen extends Stage implements Screen, GestureDetector.Ges
         // draw our fonts
         game.batch.begin();
             game.bigfont.draw(game.batch, "p i n c h",(screenWidth-bigWidth)/2,280);
-            game.font.draw(game.batch,"Tap to begin",(screenWidth-lilWidth)/2,150);
-            game.font.draw(game.batch,"Version 0.0.6",650,450);
+            game.font.draw(game.batch,"Tap to begin the 3 level demo",(screenWidth-lilWidth)/2,150);
+            game.font.draw(game.batch,"Version 0.1.0",650,450);
         game.batch.end();
     }
 

@@ -12,11 +12,10 @@ import com.liamhartery.pinch.screens.GameScreen;
 public class Chest extends Entity {
     private Animation open;
     private Animation closed;
-    private Sound chestOpen;
+    private Sound chestOpen = Gdx.audio.newSound(Gdx.files.internal("sound/effects/chestOpen.wav"));
 
     public Chest(TextureAtlas atlas, TiledMapTileLayer layer, GameScreen screen, Vector2 pos) {
         super(atlas, layer, screen, pos);
-        chestOpen = Gdx.audio.newSound(Gdx.files.internal("sound/effects/chestOpen.wav"));
         closed = new Animation(1f,getTextureAtlas().findRegion("chest_closed"));
         open = new Animation(1f,getTextureAtlas().findRegion("chest_open"));
         setAnimation(closed);

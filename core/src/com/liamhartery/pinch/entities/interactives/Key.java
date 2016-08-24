@@ -1,6 +1,7 @@
 package com.liamhartery.pinch.entities.interactives;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -12,7 +13,7 @@ import com.liamhartery.pinch.screens.GameScreen;
 // TODO better key animation
 // TODO different key sprite
 public class Key extends Entity {
-    private Player player;
+
     public Key(TextureAtlas atlas,TiledMapTileLayer layer,
                GameScreen screen,
                Vector2 pos,
@@ -20,7 +21,6 @@ public class Key extends Entity {
                 ){
         super(atlas,layer,screen,pos);
         getEntities().add(this);
-        this.player = player;
         setAnimation(new Animation(0.1f,
                 atlas.findRegion("key0"),
                 atlas.findRegion("key1"),

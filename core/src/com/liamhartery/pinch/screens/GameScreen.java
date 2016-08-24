@@ -25,6 +25,7 @@ import com.liamhartery.pinch.entities.Entity;
 import com.liamhartery.pinch.entities.Player;
 import com.liamhartery.pinch.entities.Projectile;
 import com.liamhartery.pinch.entities.enemies.BlobEnemy;
+import com.liamhartery.pinch.entities.interactives.Door;
 import com.liamhartery.pinch.entities.interactives.Key;
 
 import java.util.ArrayList;
@@ -482,6 +483,14 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                                     new Vector2(x*layer.getTileWidth(),y*layer.getTileHeight()),
                                     player
                             );
+                        }else if(properties.containsKey("door")){
+                            new Door(
+                                    new TextureAtlas(Gdx.files.internal("entities/door/door.pack")),
+                                    (TiledMapTileLayer)tiledMap.getLayers().get(layerNum),
+                                    this,
+                                    new Vector2(x*layer.getTileWidth(),y*layer.getTileHeight()),
+                                    tiledMap
+                            );
                         }
                     }
                     // key
@@ -571,6 +580,22 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                             &&player.getCollisionLayer().equals(tempKey.getCollisionLayer())){
                         tempKey.playerGotMe();
                         player.giveKey();
+                    }
+                }
+            }
+        }
+        if(player.isNextTo("door")){
+            for(int i=0;i<Entity.getEntities().size();i++){
+                if(Entity.getEntities().get(i) instanceof Door){
+                    Door tempDoor = (Door)Entity.getEntities().get(i);
+                    if(tempDoor.getBoundingRectangle().overlaps(player.getBoundingRectangle())
+                    &&player.getCollisionLayer().equals(tempDoor.getCollisionLayer())
+                            &&tempDoor.isLocked()) {
+                        if(player.useKey()){
+                            tempDoor.unlock();
+                        }else{
+                            tempDoor.playLockedSound();
+                        }
                     }
                 }
             }

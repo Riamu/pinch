@@ -1,6 +1,7 @@
 package com.liamhartery.pinch.entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -53,6 +54,10 @@ public class Player extends Entity{
     private ArrayList<Item> items = new ArrayList<Item>();
     RandomXS128 random = new RandomXS128();
 
+    // sounds
+    private Sound keySound = Gdx.audio.newSound
+            (Gdx.files.internal("sound/effects/keys-rattle-03.wav"));
+
     private float elapsedTime = 0;
 
     public Player(TextureAtlas atlas, TiledMapTileLayer layer,
@@ -78,6 +83,15 @@ public class Player extends Entity{
         projectileTTK = 1;
         coolDown = 0.4f;
 
+    }
+
+    @Override
+    public void dispose(){
+        heartTexture.dispose();
+        emptyHeartTexture.dispose();
+        key.dispose();
+        keySound.dispose();
+        super.dispose();
     }
     public void update(float x, float y, float delta){
         Vector2 end = new Vector2(x-getHeight()/2,y-getHeight()/2);
@@ -281,6 +295,7 @@ public class Player extends Entity{
     }
     public void giveKey(){
         keys.add(key);
+        keySound.play(0.5f);
     }
     public boolean useKey(){
         if (keys.size() != 0) {

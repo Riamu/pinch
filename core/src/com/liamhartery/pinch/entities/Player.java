@@ -22,7 +22,9 @@ public class Player extends Entity{
     // Textures
     private Texture heartTexture = new Texture(Gdx.files.internal("icons/fullheart.png"));
     private Texture emptyHeartTexture = new Texture(Gdx.files.internal("icons/emptyheart.png"));
+    private Texture key = new Texture(Gdx.files.internal("entities/key/key.png"));
     private ArrayList<Texture> hearts;
+    private ArrayList<Texture> keys;
 
     // Movement variables
     private float speed;
@@ -40,7 +42,6 @@ public class Player extends Entity{
 
     // booleans
     private boolean invulnerable = false;
-    private boolean hasKey = false;
 
     // projectile stuff (TTK = time to kill)
     private float coolDown;
@@ -275,6 +276,24 @@ public class Player extends Entity{
             //Gdx.app.log("Player got","TTK up");
             items.add(new ProjectileTTKUp(this));
         }
+    }
+    public void giveKey(){
+        keys.add(key);
+    }
+    public boolean useKey(){
+        if (keys.size() != 0) {
+            keys.remove(keys.size()-1);
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    public void loseAllKeys(){
+        keys.clear();
+    }
+    public ArrayList<Texture> getKeys(){
+        return keys;
     }
     // returns the coolDown time for attacks
     public float getCoolDown(){

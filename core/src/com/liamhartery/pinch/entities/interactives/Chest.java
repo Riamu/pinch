@@ -1,4 +1,4 @@
-package com.liamhartery.pinch.entities;
+package com.liamhartery.pinch.entities.interactives;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -6,9 +6,10 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Vector2;
+import com.liamhartery.pinch.entities.Entity;
 import com.liamhartery.pinch.screens.GameScreen;
 
-public class Chest extends Entity{
+public class Chest extends Entity {
     private Animation open;
     private Animation closed;
     private Sound chestOpen;

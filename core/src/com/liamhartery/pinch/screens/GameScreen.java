@@ -20,11 +20,13 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.liamhartery.pinch.PinchGame;
-import com.liamhartery.pinch.entities.Chest;
+import com.liamhartery.pinch.entities.interactives.Chest;
 import com.liamhartery.pinch.entities.Entity;
 import com.liamhartery.pinch.entities.Player;
 import com.liamhartery.pinch.entities.Projectile;
 import com.liamhartery.pinch.entities.enemies.BlobEnemy;
+import com.liamhartery.pinch.entities.interactives.Key;
+
 import java.util.ArrayList;
 
 public class GameScreen implements Screen,GestureListener,InputProcessor {
@@ -225,7 +227,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         for (int i = 0; i < projectiles.size(); i++) {
             projectiles.get(i).update(delta);
         }
-        player.updateHearts();
+        //player.updateHearts();
 
         // If the screen is touched with 1 finger we move the oldPlayer towards that point
         if (Gdx.input.isTouched()) {
@@ -327,6 +329,11 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         for (int i = 0; i < player.getHearts().size(); i++) {
             game.batch.draw(player.getHearts().get(i), camera.position.x - screenWidth / 2 + 9 + (9 * i),
                     camera.position.y + screenHeight / 2 - 20);
+        }
+        // draw keys below hearts
+        for(int i = 0; i<player.getKeys().size();i++){
+            game.batch.draw(player.getKeys().get(i),camera.position.x-screenWidth/2+9+(9*i),
+            camera.position.y+screenHeight/2-40);
         }
         if(devMode) {
             // FPS counter
@@ -467,6 +474,14 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                             new BlobEnemy(new TextureAtlas(Gdx.files.internal("entities/enemies/blob.pack")),
                                     (TiledMapTileLayer) tiledMap.getLayers().get(layerNum), this,
                                     new Vector2(x * layer.getTileWidth(), y * layer.getTileHeight()));
+                        }else if(properties.containsKey("key")){
+                            new Key(
+                                    new TextureAtlas(Gdx.files.internal("entities/key/key.pack")),
+                                    (TiledMapTileLayer)tiledMap.getLayers().get(layerNum),
+                                    this,
+                                    new Vector2(x*layer.getTileWidth(),y*layer.getTileHeight()),
+                                    player
+                            );
                         }
                     }
                     // key

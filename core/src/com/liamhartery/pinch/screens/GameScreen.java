@@ -330,7 +330,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
             game.batch.draw(player.getHearts().get(i), camera.position.x - screenWidth / 2 + 9 + (9 * i),
                     camera.position.y + screenHeight / 2 - 20);
         }
-        // draw keys below hearts
+        //draw keys below hearts
         for(int i = 0; i<player.getKeys().size();i++){
             game.batch.draw(player.getKeys().get(i),camera.position.x-screenWidth/2+9+(9*i),
             camera.position.y+screenHeight/2-40);
@@ -563,6 +563,18 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                 }
             }
         }
+        if(player.isNextTo("key")){
+            for(int i=0;i<Entity.getEntities().size();i++){
+                if(Entity.getEntities().get(i)instanceof Key){
+                    Key tempKey = (Key)Entity.getEntities().get(i);
+                    if(tempKey.getBoundingRectangle().overlaps(player.getBoundingRectangle())
+                            &&player.getCollisionLayer().equals(tempKey.getCollisionLayer())){
+                        tempKey.playerGotMe();
+                        player.giveKey();
+                    }
+                }
+            }
+        }
         /* Locked door logic
          * There will be a tile with both "blocked" and "door" as properties
          * in the setup for the map we'll put down a door sprite where "door" property is
@@ -586,6 +598,8 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
             changeFloor(1);
         }else if(Gdx.input.isKeyPressed(Input.Keys.W)){
             win();
+        }else if(Gdx.input.isKeyPressed(Input.Keys.Q)){
+            player.useKey();
         }
         return false;
     }

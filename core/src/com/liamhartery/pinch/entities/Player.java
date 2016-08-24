@@ -22,7 +22,7 @@ public class Player extends Entity{
     // Textures
     private Texture heartTexture = new Texture(Gdx.files.internal("icons/fullheart.png"));
     private Texture emptyHeartTexture = new Texture(Gdx.files.internal("icons/emptyheart.png"));
-    private Texture key = new Texture(Gdx.files.internal("entities/key/key.png"));
+    private Texture key = new Texture(Gdx.files.internal("entities/key/key_icon.png"));
     private ArrayList<Texture> hearts;
     private ArrayList<Texture> keys;
 
@@ -62,6 +62,8 @@ public class Player extends Entity{
         animationSetup();
         // get our hearts ArrayList ready
         hearts = new ArrayList<Texture>();
+        // get our key ArrayList ready;
+        keys = new ArrayList<Texture>();
         // when we have a new player it's clearly the start of a set of levels so health should be
         // at its minimum value
         setMaxHealth(3);

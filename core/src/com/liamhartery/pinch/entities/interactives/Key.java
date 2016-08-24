@@ -9,7 +9,8 @@ import com.liamhartery.pinch.entities.Entity;
 import com.liamhartery.pinch.entities.Player;
 import com.liamhartery.pinch.screens.GameScreen;
 
-// TODO find a key animation
+// TODO better key animation
+// TODO different key sprite
 public class Key extends Entity {
     private Player player;
     public Key(TextureAtlas atlas,TiledMapTileLayer layer,
@@ -21,18 +22,18 @@ public class Key extends Entity {
         getEntities().add(this);
         this.player = player;
         setAnimation(new Animation(0.1f,
-                atlas.findRegion("0")
+                atlas.findRegion("key0"),
+                atlas.findRegion("key1"),
+                atlas.findRegion("key2"),
+                atlas.findRegion("key3"),
+                atlas.findRegion("key4")
                 ));
+        setX(pos.x);
+        setY(pos.y);
     }
 
-    @Override
-    public void update(float delta){
-        if(player.getBoundingRectangle().overlaps(getBoundingRectangle())
-        &&player.getCollisionLayer()==getCollisionLayer()
-        ){
-            player.giveKey();
-            getEntities().remove(this);
-        }
+    public void playerGotMe(){
+        getEntities().remove(this);
     }
 
 }

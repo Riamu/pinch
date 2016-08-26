@@ -28,10 +28,6 @@ public class Chest extends Entity {
         if(getAnimation().equals(closed)){
             setAnimation(open);
             chestOpen.play();
-            // returns an int equal to the number of items the player should receive
-            // this number is then passed to the player.receiveItems(int num) method
-            // which will generate a random "num" number of items for the player
-            // this is the roguelike element
             return 1;
         }
         return 0;

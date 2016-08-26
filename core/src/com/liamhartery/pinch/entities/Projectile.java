@@ -4,9 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.liamhartery.pinch.entities.interactives.Door;
 import com.liamhartery.pinch.screens.GameScreen;
 
 /*
@@ -95,6 +97,9 @@ public class Projectile extends Sprite{
         if(offMap()){
             dispose();
         }
+        if(isOnTile("blocked")){
+            dispose();
+        }
     }
 
     // returns true if the tile the projectile is currently in is a "blocked" tile (wall)
@@ -117,13 +122,23 @@ public class Projectile extends Sprite{
         for(int i=0;i<Entity.getEntities().size();i++){
             tempRect = Entity.getEntities().get(i).getBoundingRectangle();
             if(getBoundingRectangle().overlaps(tempRect)
-                    && this.getCollisionLayer()==Entity.getEntities().get(i).getCollisionLayer()){
+                    && this.getCollisionLayer()==Entity.getEntities().get(i).getCollisionLayer()
+                    && !(Entity.getEntities().get(i) instanceof Door)){
                 Entity.getEntities().get(i).takeDamage(damage);
                 game.removeProjectile(this);
             }
         }
     }
-
+    public boolean isOnTile(String string){
+        TiledMapTile tempTile;
+        tempTile = getCollisionLayer().getCell(
+                (int)((getX()+getWidth()/2)/16),
+                (int)((getY()+getHeight()/2)/16))
+                .getTile();
+        if(tempTile.getProperties().containsKey(string))
+            return true;
+        return false;
+    }
     public Animation getAnimation(){
         return animation;
     }

@@ -70,4 +70,8 @@ public class Door extends Entity {
         lockedSound.play(0.5f);
     }
 
+    @Override
+    public void takeDamage(int dmg){
+        // do nothing
+    }
 }

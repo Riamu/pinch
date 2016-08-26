@@ -19,7 +19,11 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+
 import com.liamhartery.pinch.PinchGame;
+import com.liamhartery.pinch.entities.enemies.ArmouredBlob;
+import com.liamhartery.pinch.entities.enemies.FastBlob;
+import com.liamhartery.pinch.entities.enemies.FollowBlob;
 import com.liamhartery.pinch.entities.interactives.Chest;
 import com.liamhartery.pinch.entities.Entity;
 import com.liamhartery.pinch.entities.Player;
@@ -34,7 +38,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     private final PinchGame game;
 
     // Tiled Map Variables
-    private int currentLayer = 5;
+    private int currentLayer = 0;
     private TiledMap tiledMap;
     private TiledMapRenderer tiledMapRenderer;
     private int currentLevelNum;
@@ -67,7 +71,10 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     // Cheats
-    private boolean devMode = false;
+    private boolean devMode = true;
+
+    // player position broadcast
+    private Vector2 playerPos;
 
     // dispose any resource that needs disposing of
     @Override
@@ -96,6 +103,9 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         camera = new OrthographicCamera();
         camera.setToOrtho(false,screenWidth,screenHeight);
 
+        // just in case followblobs update gets called early
+        playerPos = new Vector2(0,0);
+
         //Load the map
         currentLevelNum = levelNum;
         currentLevelDir = levelDirectory;
@@ -104,13 +114,12 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         setUpTiledMap();
 
         // create a new Player object for the Player using the playerImage
-
         player = new Player(
                 new TextureAtlas("entities/charles/charles.pack"),
                 (TiledMapTileLayer)tiledMap.getLayers().get(currentLayer),
                 this,
                 new Vector2(startingPlayerX,startingPlayerY));
-
+        playerPos = new Vector2(startingPlayerX,startingPlayerY);
         // at startup make sure the camera is centred on the player
         // otherwise some badShit(tm) can happen
         camera.position.x = startingPlayerX;
@@ -140,6 +149,9 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         camera = new OrthographicCamera();
         camera.setToOrtho(false,screenWidth,screenHeight);
 
+        // just in case followblobs update gets called early
+        playerPos = new Vector2(0,0);
+
         //Load the map
         currentLevelNum = levelNum;
         currentLevelDir = levelDirectory;
@@ -153,6 +165,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         player.updateHearts();
         player.setGameScreen(this);
         this.player = player;
+        playerPos = new Vector2(player.getPosition());
 
         // at startup make sure the camera is centred on the player
         // otherwise some badShit(tm) can happen
@@ -192,6 +205,9 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
             delta = 0;
             firstFrame = false;
         }
+        if(delta>1/15f){
+            delta=1/60f;
+        }
         // check if the invulnerability timer is over our specified amount of (1)
         // TODO make increased invulnerability times a powerup
         if (invulTimer > 1) {
@@ -228,7 +244,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         for (int i = 0; i < projectiles.size(); i++) {
             projectiles.get(i).update(delta);
         }
-        //player.updateHearts();
+        player.updateHearts();
 
         // If the screen is touched with 1 finger we move the oldPlayer towards that point
         if (Gdx.input.isTouched()) {
@@ -240,6 +256,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                 touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
                 camera.unproject(touchPos);
                 player.update(touchPos.x, touchPos.y, delta);
+                playerPos = player.getPosition();
             }
         } else {
             player.setIdle();
@@ -382,7 +399,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     // Win and Loss conditions
     public void win(){
         // TODO make more levels so we can change this number to 5
-        if(currentLevelNum<3){
+        if(currentLevelNum<4){
             dispose();
             game.setScreen(new GameScreen(game,currentLevelDir,currentLevelNum+1,player));
         }else {
@@ -411,7 +428,12 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     public TiledMapTileLayer getCurrentLayer(){
         return player.getCollisionLayer();
     }
-
+    public TiledMap getTiledMap(){
+        return tiledMap;
+    }
+    public int getCurrentLayerInt(){
+        return currentLayer;
+    }
     // called whenever a pinchStop is registered,
     // takes the distance fingers travelled for pinch/zoom gesture
     // if the distance is negative they go up one level, if positive they go down
@@ -472,7 +494,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                         }
                         // "blob" is a blob enemy
                         else if (properties.containsKey("blob")) {
-                            new BlobEnemy(new TextureAtlas(Gdx.files.internal("entities/enemies/blob.pack")),
+                            new BlobEnemy(new TextureAtlas(Gdx.files.internal("entities/enemies/blob/blob.pack")),
                                     (TiledMapTileLayer) tiledMap.getLayers().get(layerNum), this,
                                     new Vector2(x * layer.getTileWidth(), y * layer.getTileHeight()));
                         }else if(properties.containsKey("key")){
@@ -490,6 +512,24 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                                     this,
                                     new Vector2(x*layer.getTileWidth(),y*layer.getTileHeight()),
                                     tiledMap
+                            );
+                        }else if(properties.containsKey("followblob")){
+                            new FollowBlob(
+                              new TextureAtlas(Gdx.files.internal("entities/enemies/followblob/blob.pack")),
+                                    (TiledMapTileLayer)tiledMap.getLayers().get(layerNum),this,
+                                    new Vector2(x*layer.getTileWidth(),y*layer.getTileHeight())
+                            );
+                        }else if(properties.containsKey("fastblob")){
+                            new FastBlob(
+                                    new TextureAtlas(Gdx.files.internal("entities/enemies/fastblob/blob.pack")),
+                                    (TiledMapTileLayer)tiledMap.getLayers().get(layerNum),this,
+                                    new Vector2(x*layer.getTileWidth(),y*layer.getTileHeight())
+                            );
+                        }else if(properties.containsKey("armouredblob")){
+                            new ArmouredBlob(
+                                    new TextureAtlas(Gdx.files.internal("entities/enemies/armouredblob/blob.pack")),
+                                    (TiledMapTileLayer)tiledMap.getLayers().get(layerNum),this,
+                                    new Vector2(x*layer.getTileWidth(),y*layer.getTileHeight())
                             );
                         }
                     }
@@ -600,20 +640,12 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                 }
             }
         }
-        /* Locked door logic
-         * There will be a tile with both "blocked" and "door" as properties
-         * in the setup for the map we'll put down a door sprite where "door" property is
-         *
-         * if the player is next to a door tile
-         *     we check if he's touching the door and has a key
-         *     we then remove the blocked property from the tile that the door is on
-         *     we remove the key from his inventory
-         *     we change the door's Texture to the open door texture
-         *     door can be a type of entity so that we render it in the loop
-         */
         return false;
     }
 
+    public Vector2 getPlayerPos(){
+        return playerPos;
+    }
     // Keyboard input for changing floors TODO take this out on android release
     @Override
     public boolean keyDown(int keycode) {
@@ -624,7 +656,9 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         }else if(Gdx.input.isKeyPressed(Input.Keys.W)){
             win();
         }else if(Gdx.input.isKeyPressed(Input.Keys.Q)){
-            player.useKey();
+            player.setMaxHealth(player.getMaxHealth()+1);
+            player.setHealth(player.getMaxHealth());
+            player.updateHearts();
         }
         return false;
     }

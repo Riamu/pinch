@@ -16,8 +16,6 @@ import com.liamhartery.pinch.screens.GameScreen;
 
 import java.util.ArrayList;
 // TODO Better player Sprite
-// TODO inventory / Powerups
-// TODO Key and locked door mechanic
 
 public class Player extends Entity{
     // Textures

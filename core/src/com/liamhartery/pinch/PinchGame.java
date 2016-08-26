@@ -9,41 +9,35 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // URGENT is marked with [*]
 
 // General
-// TODO Main menu Buttons
+// [*]TODO Main menu Buttons
+// [*]TODO Music
+// [*]TODO AdMob Integration
+// [*]TODO At least 15 levels for release (not including tutorial levels)
+// [*]TODO Figure out how to display text mid-game and make a tutorial
 
 // Player
-// TODO Get better 16x16 Player image
-// [*]TODO Key and locked door mechanic
+// [*]TODO Get better 16x16 Player image
 // TODO Decide about projectile mechanics
 
+
 // Enemies
-// TODO Add more enemies
-    // BlobEnemy
-    // TODO Better movement
+// TODO make the enemies collide with the player and vice versa?
+// I kind of want to add an enemy that uses projectiles but I'm unsure
 
 
 // Known Bugs
 // player sprite is too large
 // timer isn't working properly
+// can sometimes clip out of the confines of the map
 
-/*
- * Changes in this version:
- *     Projectile is now on a death timer
- *     Re-organized some more code
- *     Fixed Projectiles colliding with things on different layers from it
- *     Added items, chests will now give you a randomly chosen item from all possible items
- *         might change this so certain items are more common than others but the current system is
- *         fine for now
- */
 public class PinchGame extends Game {
 	public SpriteBatch batch;
 	public BitmapFont bigfont;
 	public BitmapFont font;
 	@Override
 	public void create () {
-		batch = new SpriteBatch();
-
-		font = new BitmapFont(Gdx.files.internal("fonts/data_control.fnt"));
+        batch = new SpriteBatch();
+        font = new BitmapFont(Gdx.files.internal("fonts/data_control.fnt"));
 		bigfont = new BitmapFont(Gdx.files.internal("fonts/codex.fnt"));
 
 		// Change screens to the menu screen

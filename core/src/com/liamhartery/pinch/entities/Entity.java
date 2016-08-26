@@ -1,7 +1,5 @@
 package com.liamhartery.pinch.entities;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -165,6 +163,32 @@ public abstract class Entity extends Sprite {
             return tempTile.getProperties().containsKey("blocked");
         }
         return false;
+    }
+
+    // meant to make collisions between different entities happen
+    public void resolveEntityCollisions(){
+        for(int i=0;i<entities.size();i++){
+            Entity tempEntity = entities.get(i);
+            if(getDirection().x>0f){
+                if(tempEntity.getPosition().x-getPosition().x<getWidth()){
+                    setPosition(oldPosition);
+                }
+            }else if(getDirection().x<0f){
+                if(getPosition().x-tempEntity.getPosition().x<getWidth()){
+                    setPosition(oldPosition);
+                }
+            }
+            if(getDirection().y>0f){
+                if(tempEntity.getPosition().y-getPosition().y<getHeight()){
+                    setPosition(oldPosition);
+                }
+
+            }else if(getDirection().y<0f){
+                if(getPosition().y-tempEntity.getPosition().y<getHeight()){
+                    setPosition(oldPosition);
+                }
+            }
+        }
     }
 
     // direction getter and setter

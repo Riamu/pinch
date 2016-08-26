@@ -36,4 +36,8 @@ public class Key extends Entity {
         getEntities().remove(this);
     }
 
+    @Override
+    public void takeDamage(int damage){
+        // do nothing
+    }
 }

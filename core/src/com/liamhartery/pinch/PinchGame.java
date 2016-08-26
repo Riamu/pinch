@@ -27,13 +27,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 // Known Bugs
 // player sprite is too large
-// timer isn't working properly
 // can sometimes clip out of the confines of the map
 
 public class PinchGame extends Game {
 	public SpriteBatch batch;
 	public BitmapFont bigfont;
 	public BitmapFont font;
+	public float timer;
 	@Override
 	public void create () {
         batch = new SpriteBatch();

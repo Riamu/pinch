@@ -71,7 +71,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     // Cheats
-    private boolean devMode = true;
+    private boolean devMode = false;
 
     // player position broadcast
     private Vector2 playerPos;
@@ -196,7 +196,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         /*
          * LOGIC SECTION RIGHT HERE BOYS
          */
-
+        game.timer+=delta;
         // elapsed time for the animation
         elapsedTime += delta;
         // if it's the first frame we set delta to 0 since we might get some buggy behaviour if
@@ -403,7 +403,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
             dispose();
             game.setScreen(new GameScreen(game,currentLevelDir,currentLevelNum+1,player));
         }else {
-            game.setScreen(new WinScreen(game, player.getElapsedTime()));
+            game.setScreen(new WinScreen(game, game.timer));
             dispose();
             player.dispose();
         }

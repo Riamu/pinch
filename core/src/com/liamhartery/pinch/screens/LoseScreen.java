@@ -22,7 +22,7 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
 
     public LoseScreen(final PinchGame pinch) {
         game = pinch;
-
+        game.timer=0;
         // camera setup
         screenWidth = 800;
         screenHeight = 480;

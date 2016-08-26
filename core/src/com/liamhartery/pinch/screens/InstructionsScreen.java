@@ -1,6 +1,7 @@
 package com.liamhartery.pinch.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -58,10 +59,15 @@ public class InstructionsScreen implements Screen,GestureDetector.GestureListene
             // License: https://creativecommons.org/licenses/by/3.0/
             game.font.draw(game.batch,"Character by Sheep: http://opengameart.org/users/sheep",20,20);
         game.batch.end();
+        if(Gdx.input.isKeyPressed(Input.Keys.BACK)){
+            game.setScreen(new ButtonScreen(game));
+            dispose();
+        }
     }
     @Override
     public boolean tap(float x, float y, int count, int button) {
-        game.setScreen(new GameScreen(game,1,1));
+        game.setScreen(new ButtonScreen(game));
+        dispose();
         return false;
     }
 

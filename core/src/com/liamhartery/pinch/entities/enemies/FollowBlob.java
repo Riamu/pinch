@@ -43,7 +43,8 @@ public class FollowBlob extends Entity{
     }
 
     public void chooseDirection(){
-        if(getGame().getTiledMap().getLayers().get(getGame().getCurrentLayerInt()).equals(getCollisionLayer())) {
+        if(getGame().getTiledMap().getLayers().get(getGame().getCurrentLayerInt())
+                .equals(getCollisionLayer())) {
             setDirection(new Vector2(getGame().getPlayerPos().x - getPosition().x,
                                     getGame().getPlayerPos().y - getPosition().y).nor());
         }

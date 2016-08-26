@@ -271,9 +271,17 @@ public class Player extends Entity{
         Vector2 proPos = new Vector2(getPosition());
         proPos.x+=8;
         proPos.y+=8;
-        getGame().addProjectile(new Projectile(new TextureAtlas(Gdx.files.internal("entities/projectile/projectile.pack")),
-                getCollisionLayer(),getGame(),proPos,proDir,projectileDamage,projectileSpeed,projectileTTK,
-                this));
+        getGame().addProjectile(new Projectile(new TextureAtlas(
+                Gdx.files.internal("entities/projectile/projectile.pack")),
+                getCollisionLayer(),
+                getGame(),
+                proPos,
+                proDir,
+                projectileDamage,
+                projectileSpeed,
+                projectileTTK,
+                this
+        ));
     }
     // Receive a random buff/item
     public void receiveRandomItem(){

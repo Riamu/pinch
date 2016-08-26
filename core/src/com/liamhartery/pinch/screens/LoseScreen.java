@@ -1,6 +1,7 @@
 package com.liamhartery.pinch.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -51,8 +52,8 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
         // I'm really getting sick of commenting game.batch Seriously you should know how this works
         game.batch.begin();
             game.font.getData().setScale(0.5f);
-            game.bigfont.draw(game.batch,"g a m e",(screenWidth-bigWidth)/2,320);
-            game.bigfont.draw(game.batch,"o v e r",(screenWidth-bigWidth)/2,260);
+            game.bigfont.draw(game.batch,"g a m e",(screenWidth-bigWidth)/2,300);
+            game.bigfont.draw(game.batch,"o v e r",(screenWidth-bigWidth)/2,250);
             lilLayout = new GlyphLayout(game.font,"Tap to return to the main menu");
             lilWidth = lilLayout.width;
             game.font.draw(game.batch,"Tap to return to the main menu",(screenWidth-lilWidth)/2,180);
@@ -60,6 +61,10 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
             lilWidth = lilLayout.width;
             game.font.draw(game.batch,"Long-press to quit",(screenWidth-lilWidth)/2,140);
         game.batch.end();
+        if(Gdx.input.isKeyPressed(Input.Keys.BACK)){
+            game.setScreen(new ButtonScreen(game));
+            dispose();
+        }
     }
     @Override
     public boolean longPress(float x, float y) {

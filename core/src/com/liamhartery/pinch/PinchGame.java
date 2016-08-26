@@ -9,10 +9,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // URGENT is marked with [*]
 
 // General
-// [*]TODO Main menu Buttons
 // [*]TODO Music
 // [*]TODO AdMob Integration
-// [*]TODO At least 15 levels for release (not including tutorial levels)
+// [*]TODO At least 15 levels for release (not including tutorial levels) (5/15)
 // [*]TODO Figure out how to display text mid-game and make a tutorial
 
 // Player
@@ -42,6 +41,7 @@ public class PinchGame extends Game {
 
 		// Change screens to the menu screen
 		this.setScreen(new com.liamhartery.pinch.screens.MainMenuScreen(this));
+		Gdx.input.setCatchBackKey(true);
 	}
 
 	@Override

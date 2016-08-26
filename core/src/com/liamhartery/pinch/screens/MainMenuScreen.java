@@ -1,6 +1,7 @@
 package com.liamhartery.pinch.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.liamhartery.pinch.*;
 
 // TODO Main Menu Buttons!
-public class MainMenuScreen extends Stage implements Screen, GestureDetector.GestureListener{
+public class MainMenuScreen implements Screen, GestureDetector.GestureListener{
     private final PinchGame game;
     private OrthographicCamera camera;
     private int screenWidth, screenHeight;
@@ -64,6 +65,10 @@ public class MainMenuScreen extends Stage implements Screen, GestureDetector.Ges
             game.font.draw(game.batch,"Tap to begin the 3 level demo",(screenWidth-lilWidth)/2,150);
             game.font.draw(game.batch,"Version 0.1.0",650,450);
         game.batch.end();
+        if(Gdx.input.isKeyPressed(Input.Keys.BACK)){
+            dispose();
+            Gdx.app.exit();
+        }
     }
 
     // if tapped we go to the instructions screen
@@ -71,7 +76,7 @@ public class MainMenuScreen extends Stage implements Screen, GestureDetector.Ges
     // TODO make this a splash screen not a mainmenu
     @Override
     public boolean tap(float x, float y, int count, int button) {
-        game.setScreen(new InstructionsScreen(game));
+        game.setScreen(new ButtonScreen(game));
         dispose();
         return false;
     }

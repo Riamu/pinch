@@ -1,5 +1,6 @@
 package com.liamhartery.pinch.screens;
 
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -15,9 +16,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.liamhartery.pinch.PinchGame;
 
-public class LevelSelectScreen extends Stage implements Screen {
+public class ButtonScreen extends Stage implements Screen {
+
     private Stage stage;
-    private TextButton tutorial,back,level1,level2,level3;
+    private TextButton back,instructionsButton,levelButton,quitButton,optionsButton;
     private TextButton.TextButtonStyle textButtonStyle;
     private BitmapFont font;
     private Skin skin;
@@ -27,18 +29,16 @@ public class LevelSelectScreen extends Stage implements Screen {
     private float screenWidth,screenHeight;
     private Table table;
     private int padAmount,cellWidth;
-
-    public LevelSelectScreen(PinchGame pinchGame){
+    public ButtonScreen(PinchGame pinchGame){
         padAmount = 50;
         cellWidth = 500;
-        screenWidth = 800;
-        screenHeight = 480;
         game = pinchGame;
-
         table = new Table();
         //table.debug();
 
         // camera stuff
+        screenWidth = 800;
+        screenHeight = 480;
         camera = new OrthographicCamera();
         camera.setToOrtho(false,screenWidth,screenHeight);
 
@@ -46,8 +46,10 @@ public class LevelSelectScreen extends Stage implements Screen {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
+
         // fonts
         font = game.font;
+        font.getData().setScale(2,2);
 
         skin = new Skin();
         buttonAtlas = new TextureAtlas(Gdx.files.internal("ui/uiskin.atlas"));
@@ -60,21 +62,21 @@ public class LevelSelectScreen extends Stage implements Screen {
         textButtonStyle.down = skin.getDrawable("fixed_purple_button_down");
         //textButtonStyle.checked = skin.getDrawable("fixed_purple_button_down"); // this make the button toggle
 
-        tutorial = new TextButton("Tutorial",textButtonStyle);
         back = new TextButton("Back",textButtonStyle);
-        level1 = new TextButton("Level 1",textButtonStyle);
-        level2 = new TextButton("Level 2",textButtonStyle);
-        level3 = new TextButton("Level 3",textButtonStyle);
+        instructionsButton = new TextButton("Instructions",textButtonStyle);
+        levelButton = new TextButton("Level Select",textButtonStyle);
+        quitButton = new TextButton("Quit",textButtonStyle);
+        optionsButton = new TextButton("Options",textButtonStyle);
 
-        table.add(tutorial).width(cellWidth).expandX().padBottom(padAmount);
+        table.add(instructionsButton).width(cellWidth).expandX().padBottom(padAmount);
         table.row();
-        table.add(level1).width(cellWidth).expandX().padBottom(padAmount);
+        table.add(levelButton).width(cellWidth).expandX().padBottom(padAmount);
         table.row();
-        table.add(level2).width(cellWidth).expandX().padBottom(padAmount);
-        table.row();
-        table.add(level3).width(cellWidth).expandX().padBottom(padAmount);
+        table.add(optionsButton).width(cellWidth).expandX().padBottom(padAmount);
         table.row();
         table.add(back).width(cellWidth).expandX().padBottom(padAmount);
+        table.row();
+        table.add(quitButton).width(cellWidth).expandX().padBottom(padAmount);
 
 
         table.setX(screenWidth/2+cellWidth/2);
@@ -84,47 +86,43 @@ public class LevelSelectScreen extends Stage implements Screen {
         /*
          * Let's do some input processors down here for the buttons
          */
-        tutorial.addListener(new ClickListener(){
-           @Override
+        instructionsButton.addListener(new ClickListener(){
+            @Override
             public void clicked(InputEvent event, float x, float y){
-               //game.setScreen(new GameScreen(game,0,1));
-               //game.font.getData().setScale(0.5f);
-               //dispose();
-           }
+                game.setScreen(new InstructionsScreen(game));
+                game.font.getData().setScale(0.5f);
+                dispose();
+            }
+        });
+        levelButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                game.setScreen(new LevelSelectScreen(game));
+                //game.font.getData().setScale(0.5f);
+                dispose();
+            }
+        });
+        optionsButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                // do nothing for now
+            }
+        });
+        quitButton.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                dispose();
+                Gdx.app.exit();
+            }
         });
         back.addListener(new ClickListener(){
             @Override
-            public void clicked(InputEvent event,float x,float y){
-                game.setScreen(new ButtonScreen(game));
-                dispose();
-            }
-        });
-        level1.addListener(new ClickListener(){
-            @Override
             public void clicked(InputEvent event, float x, float y){
-                game.setScreen(new GameScreen(game,1,1));
+                game.setScreen(new MainMenuScreen(game));
                 game.font.getData().setScale(0.5f);
                 dispose();
             }
         });
-        /*
-        level2.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                game.setScreen(new GameScreen(game,2,1));
-                game.font.getData().setScale(0.5f);
-                dispose();
-            }
-        });
-        level3.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                game.setScreen(new GameScreen(game,3,1));
-                game.font.getData().setScale(0.5f);
-                dispose();
-            }
-        });
-        */
     }
 
     @Override
@@ -134,7 +132,6 @@ public class LevelSelectScreen extends Stage implements Screen {
         skin.dispose();
         stage.dispose();
     }
-
     @Override
     public void show() {
 
@@ -150,7 +147,8 @@ public class LevelSelectScreen extends Stage implements Screen {
 
         stage.draw();
         if(Gdx.input.isKeyPressed(Input.Keys.BACK)){
-            game.setScreen(new ButtonScreen(game));
+            game.setScreen(new MainMenuScreen(game));
+            game.font.getData().setScale(0.5f);
             dispose();
         }
     }

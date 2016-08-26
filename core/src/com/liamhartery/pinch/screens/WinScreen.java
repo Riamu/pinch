@@ -1,6 +1,7 @@
 package com.liamhartery.pinch.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -50,12 +51,17 @@ public class WinScreen implements Screen,GestureDetector.GestureListener {
         // draw e'erythang
         game.batch.begin();
             game.font.getData().setScale(0.5f);
-            game.bigfont.draw(game.batch,bigLayout,(screenWidth-bigLayout.width)/2,280);
+            game.bigfont.draw(game.batch,bigLayout,(screenWidth-bigLayout.width)/2,290);
             lilLayout = new GlyphLayout(game.font,"Final Time: "+time);
             game.font.draw(game.batch,"Final Time: "+time,(screenWidth-lilLayout.width)/2,200);
             lilLayout = new GlyphLayout(game.font,"Tap to return to menu, long-press to exit");
-            game.font.draw(game.batch,"Tap to return to menu, long-press to exit",(screenWidth-lilLayout.width)/2,160);
+            game.font.draw(game.batch,"Tap to return to menu, long-press to exit",
+                    (screenWidth-lilLayout.width)/2,160);
         game.batch.end();
+        if(Gdx.input.isKeyPressed(Input.Keys.BACK)){
+            game.setScreen(new ButtonScreen(game));
+            dispose();
+        }
     }
 
     @Override
@@ -101,7 +107,8 @@ public class WinScreen implements Screen,GestureDetector.GestureListener {
     }
 
     @Override
-    public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
+    public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1,
+                         Vector2 pointer2) {
         return false;
     }
 

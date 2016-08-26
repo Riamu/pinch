@@ -68,3 +68,5 @@ build/
 ## OS Specific
 .DS_Store
 Thumbs.db
+*.alloc
+captures/com.liamhartery.pinch_2016.08.25_23.00.hprof

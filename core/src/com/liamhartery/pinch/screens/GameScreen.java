@@ -71,7 +71,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     // Cheats
-    private boolean devMode = false;
+    private boolean devMode = true;
 
     // player position broadcast
     private Vector2 playerPos;
@@ -338,9 +338,12 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
 
         // TODO get a new character spritesheet
         // draw the player
+        player.setSize(16,16);
         game.batch.draw(player.getAnimation().getKeyFrame(elapsedTime, true),
                 player.getX(),
-                player.getY()
+                player.getY(),
+                16,
+                16
         );
 
         // draw hearts on top corner of screen

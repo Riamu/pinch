@@ -77,7 +77,6 @@ public class LevelSelectScreen extends Stage implements Screen {
         table.row();
         table.add(back).width(cellWidth).expandX().padBottom(padAmount);
 
-
         table.setX(0);
         table.setY(0);
         stage.addActor(table);

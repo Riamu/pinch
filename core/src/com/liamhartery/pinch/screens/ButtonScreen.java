@@ -1,6 +1,5 @@
 package com.liamhartery.pinch.screens;
 
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -30,7 +29,10 @@ public class ButtonScreen extends Stage implements Screen {
     private float screenWidth,screenHeight;
     private Table table;
     private int padAmount,cellWidth;
+
     public ButtonScreen(PinchGame pinchGame){
+        // ads
+        // similar to the onCreate() in normal android programs
         padAmount = 50;
         cellWidth = 500;
         game = pinchGame;
@@ -70,8 +72,9 @@ public class ButtonScreen extends Stage implements Screen {
         quitButton = new TextButton("Quit",textButtonStyle);
         optionsButton = new TextButton("Options",textButtonStyle);
 
+        table.setFillParent(true);
         table.add(instructionsButton).width(cellWidth).expandX().padBottom(padAmount);
-        table.row().fillX();
+        table.row();
         table.add(levelButton).width(cellWidth).expandX().padBottom(padAmount);
         table.row();
         table.add(optionsButton).width(cellWidth).expandX().padBottom(padAmount);
@@ -79,7 +82,6 @@ public class ButtonScreen extends Stage implements Screen {
         table.add(back).width(cellWidth).expandX().padBottom(padAmount);
         table.row();
         table.add(quitButton).width(cellWidth).expandX().padBottom(padAmount);
-
 
         table.setX(0);
         table.setY(0);

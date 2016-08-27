@@ -14,7 +14,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // [*]TODO Figure out how to display text mid-game and make a tutorial
 
 // Player
-// [*]TODO Get better 16x16 Player image
+// [*]TODO Get CC0 player image (size no longer matters, we've figured out setSize()
 // TODO Decide about projectile mechanics
 
 

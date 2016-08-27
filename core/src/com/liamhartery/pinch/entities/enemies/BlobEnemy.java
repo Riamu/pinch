@@ -32,6 +32,7 @@ public class BlobEnemy extends Entity {
     public BlobEnemy( TextureAtlas atlas, TiledMapTileLayer layer,
                      GameScreen gameScreen, Vector2 position){
         super(atlas,layer,gameScreen,position);
+        setSize(16,10);
         setMaxHealth(hp);
         setHealth(hp);
         setPosition(position);

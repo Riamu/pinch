@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.liamhartery.pinch.PinchGame;
 
 public class ButtonScreen extends Stage implements Screen {
@@ -33,6 +34,7 @@ public class ButtonScreen extends Stage implements Screen {
         padAmount = 50;
         cellWidth = 500;
         game = pinchGame;
+        game.adsController.showBannerAd();
         table = new Table();
         //table.debug();
 
@@ -69,7 +71,7 @@ public class ButtonScreen extends Stage implements Screen {
         optionsButton = new TextButton("Options",textButtonStyle);
 
         table.add(instructionsButton).width(cellWidth).expandX().padBottom(padAmount);
-        table.row();
+        table.row().fillX();
         table.add(levelButton).width(cellWidth).expandX().padBottom(padAmount);
         table.row();
         table.add(optionsButton).width(cellWidth).expandX().padBottom(padAmount);
@@ -79,9 +81,11 @@ public class ButtonScreen extends Stage implements Screen {
         table.add(quitButton).width(cellWidth).expandX().padBottom(padAmount);
 
 
-        table.setX(screenWidth/2+cellWidth/2);
-        table.setY(screenHeight/2+100);
+        table.setX(0);
+        table.setY(0);
         stage.addActor(table);
+        table.setFillParent(true);
+        table.center();
 
         /*
          * Let's do some input processors down here for the buttons

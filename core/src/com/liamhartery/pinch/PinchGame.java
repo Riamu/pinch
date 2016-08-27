@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 // General
 // [*]TODO Music
-// [*]TODO AdMob Integration
 // [*]TODO At least 15 levels for release (not including tutorial levels) (5/15)
 // [*]TODO Figure out how to display text mid-game and make a tutorial
 
@@ -33,12 +32,16 @@ public class PinchGame extends Game {
 	public BitmapFont bigfont;
 	public BitmapFont font;
 	public float timer;
+	public AdsController adsController;
+	public PinchGame(AdsController adsController){
+		this.adsController = adsController;
+	}
 	@Override
 	public void create () {
         batch = new SpriteBatch();
         font = new BitmapFont(Gdx.files.internal("fonts/data_control.fnt"));
 		bigfont = new BitmapFont(Gdx.files.internal("fonts/codex.fnt"));
-
+		adsController.hideBannerAd();
 		// Change screens to the menu screen
 		this.setScreen(new com.liamhartery.pinch.screens.MainMenuScreen(this));
 		Gdx.input.setCatchBackKey(true);

@@ -16,12 +16,12 @@ android {
     }
     defaultConfig {
         applicationId "com.liamhartery.pinch"
-        minSdkVersion 8
+        minSdkVersion 9
         targetSdkVersion 24
     }
     buildTypes{
         debug{
-            debuggable true
+            debuggable false
         }
     }
 }
@@ -52,6 +52,7 @@ task copyAndroidNatives() {
             }
         }
     }
+
 }
 
 task run(type: Exec) {

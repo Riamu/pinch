@@ -92,7 +92,7 @@ public class Player extends Entity{
         super.dispose();
     }
     public void update(float x, float y, float delta){
-        Vector2 end = new Vector2(x-getHeight()/2,y-getHeight()/2);
+        Vector2 end = new Vector2(x-getWidth()/2,y-getHeight()/2);
         setPosition(getX(), getY());
         // Speed is relative to how far away you touch. (for more precise control)
         // We also cap the speed
@@ -269,8 +269,8 @@ public class Player extends Entity{
         Vector2 proDir = new Vector2(velX,-velY);
         proDir.nor();
         Vector2 proPos = new Vector2(getPosition());
-        proPos.x+=8;
-        proPos.y+=8;
+        //proPos.x+=8;
+        //proPos.y+=8;
         getGame().addProjectile(new Projectile(new TextureAtlas(
                 Gdx.files.internal("entities/projectile/projectile.pack")),
                 getCollisionLayer(),

@@ -24,6 +24,9 @@ public class FastBlob extends Entity{
     public FastBlob(TextureAtlas atlas, TiledMapTileLayer layer,
                      GameScreen gameScreen, Vector2 position){
         super(atlas,layer,gameScreen,position);
+
+        // hey this fixes bounding boxes which is nice
+        setSize(16,10);
         setMaxHealth(hp);
         setHealth(hp);
         setPosition(position);

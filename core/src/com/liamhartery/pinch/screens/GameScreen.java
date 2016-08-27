@@ -71,7 +71,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     private ShapeRenderer shapeRenderer = new ShapeRenderer();
 
     // Cheats
-    private boolean devMode = true;
+    private boolean devMode = false;
 
     // player position broadcast
     private Vector2 playerPos;
@@ -401,7 +401,6 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
 
     // Win and Loss conditions
     public void win(){
-        // TODO make more levels so we can change this number to 5
         if(currentLevelNum<5){
             dispose();
             game.setScreen(new GameScreen(game,currentLevelDir,currentLevelNum+1,player));

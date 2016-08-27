@@ -41,7 +41,7 @@ public class MainMenuScreen implements Screen, GestureDetector.GestureListener{
         game.font.getData().setScale(0.5f,0.5f);
         bigLayout = new GlyphLayout(game.bigfont,"p i n c h");
         bigWidth = bigLayout.width;
-        lilLayout = new GlyphLayout(game.font,"Tap to begin the 3 level demo");
+        lilLayout = new GlyphLayout(game.font,"Tap to Begin");
         lilWidth = lilLayout.width;
 
         // This is so we can use gestures
@@ -63,7 +63,7 @@ public class MainMenuScreen implements Screen, GestureDetector.GestureListener{
         // draw our fonts
         game.batch.begin();
             game.bigfont.draw(game.batch, "p i n c h",(screenWidth-bigWidth)/2,280);
-            game.font.draw(game.batch,"Tap to begin the 3 level demo",(screenWidth-lilWidth)/2,150);
+            game.font.draw(game.batch,"Tap to Begin",(screenWidth-lilWidth)/2,150);
             game.font.draw(game.batch,"Version 0.2.0",650,450);
         game.batch.end();
         if(Gdx.input.isKeyPressed(Input.Keys.BACK)){

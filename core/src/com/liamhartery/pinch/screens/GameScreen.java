@@ -94,7 +94,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     // for anything
     public GameScreen(final PinchGame pinch, int levelDirectory, int levelNum) {
         game = pinch;
-
+        game.adsController.hideBannerAd();
         // projectile things
         projectiles = new ArrayList<Projectile>();
         attackIsOffCoolDown = true;

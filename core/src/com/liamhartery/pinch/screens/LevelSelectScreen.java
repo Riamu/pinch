@@ -34,6 +34,7 @@ public class LevelSelectScreen extends Stage implements Screen {
         screenWidth = 800;
         screenHeight = 480;
         game = pinchGame;
+        game.adsController.showBannerAd();
 
         table = new Table();
         //table.debug();
@@ -76,9 +77,11 @@ public class LevelSelectScreen extends Stage implements Screen {
         table.row();
         table.add(back).width(cellWidth).expandX().padBottom(padAmount);
 
-
-        table.setFillParent(true);
+        table.setX(0);
+        table.setY(0);
         stage.addActor(table);
+        table.setFillParent(true);
+        table.center();
 
         /*
          * Let's do some input processors down here for the buttons

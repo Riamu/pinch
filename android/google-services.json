@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "952624922933",
+    "firebase_url": "https://pinch-c705e.firebaseio.com",
+    "project_id": "pinch-c705e",
+    "storage_bucket": "pinch-c705e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952624922933:android:12d98a0cdabcad3d",
+        "android_client_info": {
+          "package_name": "com.liamhartery.pinch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "952624922933-0uqcnmcpj49dtmkfba6g87ohht2td9b3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.liamhartery.pinch",
+            "certificate_hash": "CCD15291D668D9DEC14FFE0752E195557B763EED"
+          }
+        },
+        {
+          "client_id": "952624922933-5rr6sud85657uu4jvd4ug40et0fqce0v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDX86vO6yS8zxOAbwBZTj_5c7mcu02rTvY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "952624922933-5rr6sud85657uu4jvd4ug40et0fqce0v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

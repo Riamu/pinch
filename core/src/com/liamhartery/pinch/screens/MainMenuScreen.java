@@ -29,6 +29,7 @@ public class MainMenuScreen implements Screen, GestureDetector.GestureListener{
 
     public MainMenuScreen(final PinchGame pinch){
         game = pinch;
+        game.adsController.showBannerAd();
         // camera stuff
         screenWidth = 800;
         screenHeight = 480;
@@ -63,7 +64,7 @@ public class MainMenuScreen implements Screen, GestureDetector.GestureListener{
         game.batch.begin();
             game.bigfont.draw(game.batch, "p i n c h",(screenWidth-bigWidth)/2,280);
             game.font.draw(game.batch,"Tap to begin the 3 level demo",(screenWidth-lilWidth)/2,150);
-            game.font.draw(game.batch,"Version 0.1.0",650,450);
+            game.font.draw(game.batch,"Version 0.2.0",650,450);
         game.batch.end();
         if(Gdx.input.isKeyPressed(Input.Keys.BACK)){
             dispose();
@@ -73,10 +74,10 @@ public class MainMenuScreen implements Screen, GestureDetector.GestureListener{
 
     // if tapped we go to the instructions screen
     // TODO replace instructions screen with select screen
-    // TODO make this a splash screen not a mainmenu
     @Override
     public boolean tap(float x, float y, int count, int button) {
         game.setScreen(new ButtonScreen(game));
+        game.adsController.showBannerAd();
         dispose();
         return false;
     }

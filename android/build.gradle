@@ -25,6 +25,9 @@ android {
         }
     }
 }
+dependencies{
+    compile 'com.google.firebase:firebase-ads:9.0.0'
+}
 
 
 // called every time gradle gets executed, takes the native dependencies of

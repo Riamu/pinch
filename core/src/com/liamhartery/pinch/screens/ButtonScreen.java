@@ -111,7 +111,8 @@ public class ButtonScreen extends Stage implements Screen {
         optionsButton.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                // do nothing for now
+                game.setScreen(new OptionScreen(game));
+                dispose();
             }
         });
         quitButton.addListener(new ClickListener(){

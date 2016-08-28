@@ -37,12 +37,14 @@ public class WinScreen implements Screen,GestureDetector.GestureListener {
         // This is so we can use gestures
         GestureDetector gd = new GestureDetector(this);
         Gdx.input.setInputProcessor(gd);
-        winJingle.play(0.5f);
+        if(game.soundEffects)
+            winJingle.play(0.5f);
     }
 
     @Override
     public void dispose() {
         game.timer=0;
+        winJingle.dispose();
     }
 
     @Override

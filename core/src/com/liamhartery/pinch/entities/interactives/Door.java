@@ -53,7 +53,8 @@ public class Door extends Entity {
                 .setTile(map.getTileSets().getTile(99));
         setAnimation(openDoor);
         locked = false;
-        unlockedSound.play(0.5f);
+        if(getGame().game.soundEffects)
+            unlockedSound.play(0.5f);
 
     }
     public boolean isLocked(){
@@ -67,7 +68,8 @@ public class Door extends Entity {
         super.dispose();
     }
     public void playLockedSound(){
-        lockedSound.play(0.5f);
+        if(getGame().game.soundEffects)
+            lockedSound.play(0.5f);
     }
 
     @Override

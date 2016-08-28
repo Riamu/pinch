@@ -8,8 +8,8 @@ import com.liamhartery.pinch.entities.Entity;
 import com.liamhartery.pinch.entities.Player;
 import com.liamhartery.pinch.screens.GameScreen;
 
-// TODO better key animation
-// TODO different key sprite
+// TODO better key animation (I don't actually hate it atm)
+// TODO different key sprite (CC0 or make your own)
 public class Key extends Entity {
 
     public Key(TextureAtlas atlas,TiledMapTileLayer layer,

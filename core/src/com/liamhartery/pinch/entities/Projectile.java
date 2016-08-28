@@ -30,7 +30,7 @@ import com.liamhartery.pinch.screens.GameScreen;
  *  that come from enemies, for damage calculating purposes. We could also just have to different
  *  classes for enemy projectiles and player projectiles
  *
- *  TODO Decide whether to keep current implementation where no checks are made for layer:
+ *
  *      Options: - Making the projectile pause like any other entity
  *               - Destroying the projectile upon changing layers
  *               - Keeping it the same as it currently is
@@ -40,7 +40,6 @@ public class Projectile extends Sprite{
     private int damage;
     private boolean belongsToPlayer;
     private float speed;
-
     private float elapsedTime;
     private float TTK;
 
@@ -118,6 +117,7 @@ public class Projectile extends Sprite{
     public void dispose(){
         game.removeProjectile(this);
         textureAtlas.dispose();
+        enemyHitSound.dispose();
     }
 
     // currently checks every single sprite for bounding rectangle collision
@@ -133,7 +133,11 @@ public class Projectile extends Sprite{
                     ){
                 Entity.getEntities().get(i).takeDamage(damage);
                 game.removeProjectile(this);
-                enemyHitSound.play(0.5f);
+
+                // the first game here is actually GameScreen, the second one is PinchGame
+                // my naming sucks basically. Lucky I'm the only one working on this project
+                if(game.game.soundEffects)
+                    enemyHitSound.play(0.5f);
             }
         }
     }

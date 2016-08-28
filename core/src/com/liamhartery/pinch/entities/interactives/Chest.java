@@ -27,7 +27,9 @@ public class Chest extends Entity {
     public int openChest(){
         if(getAnimation().equals(closed)){
             setAnimation(open);
-            chestOpen.play();
+            if((getGame().game.soundEffects)){
+                chestOpen.play();
+            }
             return 1;
         }
         return 0;

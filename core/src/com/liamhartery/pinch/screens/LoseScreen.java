@@ -41,7 +41,8 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
         // This is so we can use gestures
         GestureDetector gd = new GestureDetector(this);
         Gdx.input.setInputProcessor(gd);
-        loseJingle.play(0.5f);
+        if(game.soundEffects)
+            loseJingle.play(0.5f);
     }
 
     @Override
@@ -117,7 +118,7 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
 
     @Override
     public void dispose() {
-
+        loseJingle.dispose();
     }
 
     @Override

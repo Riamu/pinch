@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -36,7 +37,7 @@ import com.liamhartery.pinch.entities.interactives.Key;
 import java.util.ArrayList;
 
 public class GameScreen implements Screen,GestureListener,InputProcessor {
-    private final PinchGame game;
+    public final PinchGame game;
 
     // Tiled Map Variables
     private int currentLayer = 0;
@@ -79,7 +80,6 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
 
     private Sound resetJingle = Gdx.audio.newSound(
             Gdx.files.internal("sound/effects/resetJingle.mp3"));
-
     // dispose any resource that needs disposing of
     @Override
     public void dispose(){
@@ -91,6 +91,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
             Entity.getEntities().get(i).dispose();
         }
         Entity.getEntities().clear();
+        resetJingle.dispose();
     }
 
     // constructor is just like the create() method
@@ -140,6 +141,11 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         inputMultiplexer.addProcessor(gd);
         inputMultiplexer.addProcessor(this);
         Gdx.input.setInputProcessor(inputMultiplexer);
+
+        if(game.music) {
+        }
+        else{
+        }
     }
     public GameScreen(final PinchGame pinch, int levelDirectory, int levelNum, Player player) {
         game = pinch;
@@ -343,7 +349,6 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
             }
         }
 
-        // TODO get a new character spritesheet
         // draw the player
         player.setSize(16,16);
         game.batch.draw(player.getAnimation().getKeyFrame(elapsedTime, true),
@@ -549,11 +554,10 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
             }
         }
     }
-
-    // TODO balance dying by falling and make it better
     public void resetLevel(){
         game.setScreen(new GameScreen(game,currentLevelDir,currentLevelNum));
-        resetJingle.play();
+        if(game.soundEffects)
+            resetJingle.play();
     }
     /*
      * INPUT LISTENERS

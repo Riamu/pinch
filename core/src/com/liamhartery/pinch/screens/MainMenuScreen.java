@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.liamhartery.pinch.*;
 
-// TODO Main Menu Buttons!
 public class MainMenuScreen implements Screen, GestureDetector.GestureListener{
     private final PinchGame game;
     private OrthographicCamera camera;
@@ -72,8 +71,7 @@ public class MainMenuScreen implements Screen, GestureDetector.GestureListener{
         }
     }
 
-    // if tapped we go to the instructions screen
-    // TODO replace instructions screen with select screen
+    // if tapped we go to the ButtonScreen (really should be called MainMenu but suck it.)
     @Override
     public boolean tap(float x, float y, int count, int button) {
         game.setScreen(new ButtonScreen(game));

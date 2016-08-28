@@ -15,7 +15,6 @@ import com.liamhartery.pinch.items.ProjectileTTKUp;
 import com.liamhartery.pinch.screens.GameScreen;
 
 import java.util.ArrayList;
-// TODO Better player Sprite
 
 public class Player extends Entity{
     // Textures
@@ -91,6 +90,7 @@ public class Player extends Entity{
         emptyHeartTexture.dispose();
         key.dispose();
         keySound.dispose();
+        hitSound.dispose();
         super.dispose();
     }
     public void update(float x, float y, float delta){
@@ -262,7 +262,8 @@ public class Player extends Entity{
         }
     }
     public void playHitSound(){
-        hitSound.play(0.5f);
+        if(getGame().game.soundEffects)
+            hitSound.play(0.5f);
     }
     // the attack method
     public void attack(float velX, float velY){
@@ -305,7 +306,8 @@ public class Player extends Entity{
     }
     public void giveKey(){
         keys.add(key);
-        keySound.play(0.5f);
+        if(getGame().game.soundEffects)
+            keySound.play(0.5f);
     }
     public boolean useKey(){
         if (keys.size() != 0) {

@@ -3,6 +3,7 @@ package com.liamhartery.pinch.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -18,6 +19,8 @@ public class WinScreen implements Screen,GestureDetector.GestureListener {
 
     // time in this case is the player's final time
     private float time;
+    private Sound winJingle = Gdx.audio.newSound(
+            Gdx.files.internal("sound/effects/winJingle.mp3"));
 
     public WinScreen(final PinchGame pinch, float time) {
         game = pinch;
@@ -34,6 +37,7 @@ public class WinScreen implements Screen,GestureDetector.GestureListener {
         // This is so we can use gestures
         GestureDetector gd = new GestureDetector(this);
         Gdx.input.setInputProcessor(gd);
+        winJingle.play(0.5f);
     }
 
     @Override

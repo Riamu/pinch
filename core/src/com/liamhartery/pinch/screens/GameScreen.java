@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -75,6 +76,9 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
 
     // player position broadcast
     private Vector2 playerPos;
+
+    private Sound resetJingle = Gdx.audio.newSound(
+            Gdx.files.internal("sound/effects/resetJingle.mp3"));
 
     // dispose any resource that needs disposing of
     @Override
@@ -236,6 +240,9 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                 int damage = Entity.getEntities().get(i).playerDamage();
                 player.takeDamage(Entity.getEntities().get(i).playerDamage());
                 if(damage>0){
+                    if(!player.getInvulnerable()){
+                        player.playHitSound();
+                    }
                     player.setInvulnerable(true);
                 }
             }
@@ -546,6 +553,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     // TODO balance dying by falling and make it better
     public void resetLevel(){
         game.setScreen(new GameScreen(game,currentLevelDir,currentLevelNum));
+        resetJingle.play();
     }
     /*
      * INPUT LISTENERS
@@ -658,6 +666,7 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         }else if(Gdx.input.isKeyPressed(Input.Keys.W)){
             win();
         }else if(Gdx.input.isKeyPressed(Input.Keys.Q)){
+            player.playHitSound();
             player.setMaxHealth(player.getMaxHealth()+1);
             player.setHealth(player.getMaxHealth());
             player.updateHearts();

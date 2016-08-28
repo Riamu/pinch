@@ -1,6 +1,7 @@
 package com.liamhartery.pinch.entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.liamhartery.pinch.entities.interactives.Door;
+import com.liamhartery.pinch.entities.interactives.Key;
 import com.liamhartery.pinch.screens.GameScreen;
 
 /*
@@ -49,6 +51,9 @@ public class Projectile extends Sprite{
     private Vector2 direction,position,oldposition;
 
     private TiledMapTileLayer collisionLayer;
+
+    private Sound enemyHitSound = Gdx.audio.newSound(
+            Gdx.files.internal("sound/effects/enemyHitSound.mp3"));
 
     //private Player player;
 
@@ -123,9 +128,12 @@ public class Projectile extends Sprite{
             tempRect = Entity.getEntities().get(i).getBoundingRectangle();
             if(getBoundingRectangle().overlaps(tempRect)
                     && this.getCollisionLayer()==Entity.getEntities().get(i).getCollisionLayer()
-                    && !(Entity.getEntities().get(i) instanceof Door)){
+                    && !(Entity.getEntities().get(i) instanceof Door)
+                    && !(Entity.getEntities().get(i) instanceof Key)
+                    ){
                 Entity.getEntities().get(i).takeDamage(damage);
                 game.removeProjectile(this);
+                enemyHitSound.play(0.5f);
             }
         }
     }

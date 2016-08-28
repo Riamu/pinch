@@ -55,6 +55,8 @@ public class Player extends Entity{
     // sounds
     private Sound keySound = Gdx.audio.newSound
             (Gdx.files.internal("sound/effects/keys-rattle-03.wav"));
+    private Sound hitSound = Gdx.audio.newSound
+            (Gdx.files.internal("sound/effects/hitSound.mp3"));
 
     private float elapsedTime = 0;
 
@@ -259,7 +261,9 @@ public class Player extends Entity{
             setHealth(getHealth()-dmg);
         }
     }
-
+    public void playHitSound(){
+        hitSound.play(0.5f);
+    }
     // the attack method
     public void attack(float velX, float velY){
         // if it collides with something we deal damage to it and kill the projectile

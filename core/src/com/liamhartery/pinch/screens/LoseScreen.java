@@ -42,7 +42,9 @@ public class LoseScreen implements Screen, GestureDetector.GestureListener {
         GestureDetector gd = new GestureDetector(this);
         Gdx.input.setInputProcessor(gd);
         if(game.soundEffects)
+            game.musicFile.stop();
             loseJingle.play(0.5f);
+        game.musicFile.setLooping(false);
     }
 
     @Override

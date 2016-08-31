@@ -23,5 +23,4 @@ public class DesktopLauncher
 			}
 		}), config);
 	}
-
 }

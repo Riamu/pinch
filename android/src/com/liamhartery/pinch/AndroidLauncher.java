@@ -18,7 +18,7 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
 	private static final String BANNER_AD_UNIT_ID_TEST = "ca-app-pub-3940256099942544/6300978111";
 	private static final String BANNER_AD_UNIT_ID_REAL = "ca-app-pub-1465882120648049/7880779010";
 
-	private static final String BANNER_AD_UNIT_ID = BANNER_AD_UNIT_ID_TEST;
+	private static final String BANNER_AD_UNIT_ID = BANNER_AD_UNIT_ID_REAL;
 	AdView bannerAd;
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {

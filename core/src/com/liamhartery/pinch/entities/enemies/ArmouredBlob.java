@@ -62,6 +62,7 @@ public class ArmouredBlob extends Entity{
             setPosition(getPosition().x, getOldPosition().y);
             chooseDirection();
         }
+
         setX(getPosition().x);
         setY(getPosition().y);
     }

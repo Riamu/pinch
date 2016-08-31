@@ -39,6 +39,7 @@ public class WinScreen implements Screen,GestureDetector.GestureListener {
         Gdx.input.setInputProcessor(gd);
         if(game.soundEffects)
             winJingle.play(0.5f);
+        game.musicFile.setLooping(false);
     }
 
     @Override

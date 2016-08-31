@@ -92,6 +92,7 @@ public class OptionScreen extends Stage implements Screen {
             public void clicked(InputEvent event, float x, float y){
                 if(game.music){
                     game.music = false;
+                    game.musicFile.stop();
                 }else{
                     game.music = true;
                 }

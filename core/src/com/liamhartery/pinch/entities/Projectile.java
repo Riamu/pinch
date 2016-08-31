@@ -9,6 +9,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.liamhartery.pinch.entities.interactives.Chest;
+import com.liamhartery.pinch.entities.interactives.DialogPopper;
 import com.liamhartery.pinch.entities.interactives.Door;
 import com.liamhartery.pinch.entities.interactives.Key;
 import com.liamhartery.pinch.screens.GameScreen;
@@ -54,6 +56,8 @@ public class Projectile extends Sprite{
     private Sound enemyHitSound = Gdx.audio.newSound(
             Gdx.files.internal("sound/effects/enemyHitSound.mp3"));
 
+    private Sound swooshSound = Gdx.audio.newSound(
+            Gdx.files.internal("sound/effects/projectileSwoosh.mp3"));
     //private Player player;
 
     private GameScreen game;
@@ -84,6 +88,7 @@ public class Projectile extends Sprite{
                 textureAtlas.findRegion("projectile7"),
                 textureAtlas.findRegion("projectile8")
         );
+        swooshSound.play();
     }
 
     // currently projectiles don't actually check if they're on the current layer
@@ -118,6 +123,7 @@ public class Projectile extends Sprite{
         game.removeProjectile(this);
         textureAtlas.dispose();
         enemyHitSound.dispose();
+        swooshSound.dispose();
     }
 
     // currently checks every single sprite for bounding rectangle collision
@@ -130,6 +136,8 @@ public class Projectile extends Sprite{
                     && this.getCollisionLayer()==Entity.getEntities().get(i).getCollisionLayer()
                     && !(Entity.getEntities().get(i) instanceof Door)
                     && !(Entity.getEntities().get(i) instanceof Key)
+                    && !(Entity.getEntities().get(i) instanceof Chest)
+                    && !(Entity.getEntities().get(i) instanceof DialogPopper)
                     ){
                 Entity.getEntities().get(i).takeDamage(damage);
                 game.removeProjectile(this);
@@ -137,7 +145,7 @@ public class Projectile extends Sprite{
                 // the first game here is actually GameScreen, the second one is PinchGame
                 // my naming sucks basically. Lucky I'm the only one working on this project
                 if(game.game.soundEffects)
-                    enemyHitSound.play(0.5f);
+                    enemyHitSound.play(0.25f);
             }
         }
     }

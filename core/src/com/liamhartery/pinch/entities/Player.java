@@ -78,7 +78,7 @@ public class Player extends Entity{
         setOriginCenter();
         // projectile variables!
         projectileDamage = 1;
-        projectileSpeed = 100;
+        projectileSpeed = 150;
         projectileTTK = 1;
         coolDown = 0.4f;
 
@@ -263,7 +263,7 @@ public class Player extends Entity{
     }
     public void playHitSound(){
         if(getGame().game.soundEffects)
-            hitSound.play(0.5f);
+            hitSound.play(0.25f);
     }
     // the attack method
     public void attack(float velX, float velY){
@@ -304,10 +304,19 @@ public class Player extends Entity{
             items.add(new ProjectileTTKUp(this));
         }
     }
+    public void giveItem(String str){
+        if(str.equals("POT")){
+            items.add(new HealthUp(this));
+        }else if(str.equals("TTK")){
+            items.add(new ProjectileTTKUp(this));
+        }else if(str.equals("DMG")){
+            items.add(new ProjectileDamageUp(this));
+        }
+    }
     public void giveKey(){
         keys.add(key);
         if(getGame().game.soundEffects)
-            keySound.play(0.5f);
+            keySound.play();
     }
     public boolean useKey(){
         if (keys.size() != 0) {

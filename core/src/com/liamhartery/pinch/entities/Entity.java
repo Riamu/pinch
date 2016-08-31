@@ -166,29 +166,11 @@ public abstract class Entity extends Sprite {
     }
 
     // meant to make collisions between different entities happen
-    public void resolveEntityCollisions(){
-        for(int i=0;i<entities.size();i++){
-            Entity tempEntity = entities.get(i);
-            if(getDirection().x>0f){
-                if(tempEntity.getPosition().x-getPosition().x<getWidth()){
-                    setPosition(oldPosition);
-                }
-            }else if(getDirection().x<0f){
-                if(getPosition().x-tempEntity.getPosition().x<getWidth()){
-                    setPosition(oldPosition);
-                }
-            }
-            if(getDirection().y>0f){
-                if(tempEntity.getPosition().y-getPosition().y<getHeight()){
-                    setPosition(oldPosition);
-                }
-
-            }else if(getDirection().y<0f){
-                if(getPosition().y-tempEntity.getPosition().y<getHeight()){
-                    setPosition(oldPosition);
-                }
-            }
+    public boolean resolveEntityCollisions(){
+        for(int i=0;i<entities.size();i++) {
+            return true;
         }
+        return false;
     }
 
     // direction getter and setter

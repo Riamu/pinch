@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -50,6 +51,7 @@ public class LevelSelectScreen extends Stage implements Screen {
         // fonts
         font = game.font;
 
+        // skins
         skin = new Skin();
         buttonAtlas = new TextureAtlas(Gdx.files.internal("ui/uiskin.atlas"));
         skin.addRegions(buttonAtlas);
@@ -89,9 +91,9 @@ public class LevelSelectScreen extends Stage implements Screen {
         tutorial.addListener(new ClickListener(){
            @Override
             public void clicked(InputEvent event, float x, float y){
-               //game.setScreen(new GameScreen(game,0,1));
-               //game.font.getData().setScale(0.5f);
-               //dispose();
+               game.setScreen(new GameScreen(game,0,1));
+               game.font.getData().setScale(0.5f);
+               dispose();
            }
         });
         back.addListener(new ClickListener(){
@@ -107,6 +109,36 @@ public class LevelSelectScreen extends Stage implements Screen {
                 game.setScreen(new GameScreen(game,1,1));
                 game.font.getData().setScale(0.5f);
                 dispose();
+            }
+        });
+        level2.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event,float x,float y){
+                new Dialog("Level 3",new Skin(Gdx.files.internal("ui/experimental/uiskin.json"))){
+                    {
+                        text("Sorry, level 2 is not yet available").setScale(Gdx.graphics.getWidth()/500);
+                        button("OK").setScale(Gdx.graphics.getWidth()/500);
+                    }
+                    @Override
+                    public void result(Object object){
+
+                    }
+                }.show(stage);
+            }
+        });
+        level3.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event,float x,float y){
+                new Dialog("Level 3",new Skin(Gdx.files.internal("ui/experimental/uiskin.json"))){
+                    {
+                        text("Sorry, level 3 is not yet available").setScale(Gdx.graphics.getWidth()/500);
+                        button("OK").setScale(Gdx.graphics.getWidth()/500);
+                    }
+                    @Override
+                    public void result(Object object){
+
+                    }
+                }.show(stage);
             }
         });
         /*
@@ -150,6 +182,7 @@ public class LevelSelectScreen extends Stage implements Screen {
         // update the camera and look at stuff using the camera
         camera.update();
 
+        stage.act();
         stage.draw();
         if(Gdx.input.isKeyPressed(Input.Keys.BACK)){
             game.setScreen(new ButtonScreen(game));

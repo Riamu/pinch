@@ -71,7 +71,7 @@ public class FollowBlob extends Entity{
         if (collisionDetectionY()) {
             setPosition(getPosition().x, getOldPosition().y);
         }
-        //resolveEntityCollisions();
+
         setX(getPosition().x);
         setY(getPosition().y);
     }

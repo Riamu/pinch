@@ -26,7 +26,7 @@ public class InstructionsScreen implements Screen,GestureDetector.GestureListene
         camera.setToOrtho(false,screenWidth,screenHeight);
 
         game.bigfont.getData().setScale(0.8f,0.8f);
-        bigLayout = new GlyphLayout(game.bigfont,"instructions");
+        bigLayout = new GlyphLayout(game.bigfont,"controls");
         bigWidth = bigLayout.width;
 
         GestureDetector gd = new GestureDetector(this);
@@ -45,19 +45,14 @@ public class InstructionsScreen implements Screen,GestureDetector.GestureListene
 
         // BATCHES YET AGAIN WOOOOOOO
         game.batch.begin();
-            game.bigfont.draw(game.batch, "instructions",(screenWidth-bigWidth)/2,450);
-            game.font.draw(game.batch,"1. George will follow your finger",20,370);
-            game.font.draw(game.batch,"2. Pinching will make George go up one floor",20,340);
-            game.font.draw(game.batch,"3. Zooming will make George go down one floor",20,310);
-            game.font.draw(game.batch,"4. Tap the screen to interact with chests when George is close enough",20,280);
-            game.font.draw(game.batch,"5. George will attack if you fling in the direction you want him to attack",20,250);
-            game.font.draw(game.batch,"6. Win by tapping while standing next to the door",20,220);
-            game.font.draw(game.batch,"7. This is a puzzle game, there is always a solution and no guesswork should be required",20,190);
-            game.font.draw(game.batch,"8. Chests give you powerups, although they aren't immediately apparent",20,160);
-            game.font.draw(game.batch,"I can be contacted at liamhartery@gmail.com",20,80);
-            game.font.draw(game.batch,"Please do note that there are a few missing features (namely a key/locked door mechanic)",20,50);
+            game.bigfont.draw(game.batch, "controls",(screenWidth-bigWidth)/2,450);
+            game.font.draw(game.batch,"1. Hold down your finger until George starts to follow, then you can drag and he will follow",20,360);
+            game.font.draw(game.batch,"2. Stand on top of things and tap the screen to interact with them.",20,330);
+            game.font.draw(game.batch,"3. Pinching and Zooming (pinchzooming) will allow you to change floors",20,300);
+            game.font.draw(game.batch,"4. Follow the tutorial to learn more",20,270);
+            game.font.draw(game.batch,"5. Tap the screen to go back.",20,240);
             // License: https://creativecommons.org/licenses/by/3.0/
-            game.font.draw(game.batch,"Character by Sheep: http://opengameart.org/users/sheep",20,20);
+            game.font.draw(game.batch,"Character by Sheep: http://opengameart.org/users/sheep",20,100);
         game.batch.end();
         if(Gdx.input.isKeyPressed(Input.Keys.BACK)){
             game.setScreen(new ButtonScreen(game));

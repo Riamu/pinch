@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -21,7 +20,8 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.liamhartery.pinch.PinchGame;
 import com.liamhartery.pinch.entities.enemies.ArmouredBlob;
 import com.liamhartery.pinch.entities.enemies.FastBlob;
@@ -31,12 +31,13 @@ import com.liamhartery.pinch.entities.Entity;
 import com.liamhartery.pinch.entities.Player;
 import com.liamhartery.pinch.entities.Projectile;
 import com.liamhartery.pinch.entities.enemies.BlobEnemy;
+import com.liamhartery.pinch.entities.interactives.DialogPopper;
 import com.liamhartery.pinch.entities.interactives.Door;
 import com.liamhartery.pinch.entities.interactives.Key;
 
 import java.util.ArrayList;
 
-public class GameScreen implements Screen,GestureListener,InputProcessor {
+public class GameScreen extends Stage implements Screen,GestureListener,InputProcessor {
     public final PinchGame game;
 
     // Tiled Map Variables
@@ -75,11 +76,16 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     // Cheats
     private boolean devMode = false;
 
+    public boolean isPaused = false;
+
     // player position broadcast
     private Vector2 playerPos;
 
+    public Stage stage;
     private Sound resetJingle = Gdx.audio.newSound(
             Gdx.files.internal("sound/effects/resetJingle.mp3"));
+
+    private ArrayList<DialogPopper> dialogs;
     // dispose any resource that needs disposing of
     @Override
     public void dispose(){
@@ -92,12 +98,14 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         }
         Entity.getEntities().clear();
         resetJingle.dispose();
+        stage.dispose();
     }
 
     // constructor is just like the create() method
     // the above phrase makes less and less sense since it's been forever since I used create()
     // for anything
     public GameScreen(final PinchGame pinch, int levelDirectory, int levelNum) {
+        dialogs = new ArrayList<DialogPopper>();
         game = pinch;
         game.adsController.hideBannerAd();
         // projectile things
@@ -134,20 +142,29 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         // reset the font size because our camera actually changed
         game.font.getData().setScale(0.5f,0.5f);
 
+        // Stage stuff
+        // 1337
+        stage = new Stage();
         // set the gesture detector and input processor to that gesture detector
         gd = new GestureDetector(this);
         gd.setLongPressSeconds(0.1f);
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(gd);
         inputMultiplexer.addProcessor(this);
+        inputMultiplexer.addProcessor(stage);
         Gdx.input.setInputProcessor(inputMultiplexer);
 
         if(game.music) {
+            game.musicFile.play();
+            game.musicFile.setVolume(0.75f);
+            game.musicFile.setLooping(true);
         }
         else{
+            // do nothing
         }
     }
     public GameScreen(final PinchGame pinch, int levelDirectory, int levelNum, Player player) {
+        dialogs = new ArrayList<DialogPopper>();
         game = pinch;
 
         // projectile things
@@ -186,12 +203,16 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         // reset the font size because our camera actually changed
         game.font.getData().setScale(0.5f,0.5f);
 
+        // Stage stuff
+        // 1337
+        stage = new Stage();
         // set the gesture detector and input processor to that gesture detector
         gd = new GestureDetector(this);
         gd.setLongPressSeconds(0.1f);
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(gd);
         inputMultiplexer.addProcessor(this);
+        inputMultiplexer.addProcessor(stage);
         Gdx.input.setInputProcessor(inputMultiplexer);
 
         // this fixes the bug where when you start the next level the collision map is wrong
@@ -203,6 +224,112 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
     @Override
     public void render(float delta) {
 
+        if(isPaused){
+            Gdx.gl.glClearColor(33 / 255f, 30 / 255f, 39 / 255f, 0);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            // Camera needs to be told to update
+            camera.update();
+
+            // Set the sprite batch to render using the camera's coordinates
+            game.batch.setProjectionMatrix(camera.combined);
+            // Render the map (again using the camera)
+            tiledMapRenderer.setView(camera);
+            tiledMapRenderer.render();
+
+            // Sprite Batch
+            game.batch.begin();
+
+            // Draw all entities
+            for (int i = 0; i < Entity.getEntities().size(); i++) {
+                Entity tempEntity = Entity.getEntities().get(i);
+                if (tempEntity.getCollisionLayer() != getCurrentLayer()) {
+                    // do nothing
+                } else {
+                    game.batch.draw(tempEntity.getAnimation().getKeyFrame(elapsedTime, true),
+                            tempEntity.getX(),
+                            tempEntity.getY());
+                }
+            }
+
+            // here we draw all our projectiles
+            //Gdx.app.log("projectiles.size",""+projectiles.size());
+            for (int i = 0; i < projectiles.size(); i++) {
+                Projectile tempProjectile = projectiles.get(i);
+                if (tempProjectile.getCollisionLayer() != getCurrentLayer()) {
+                    // do nothing
+                } else {
+                    game.batch.draw(tempProjectile.getAnimation().getKeyFrame(elapsedTime, true),
+                            tempProjectile.getX(),
+                            tempProjectile.getY());
+                }
+            }
+
+            // draw the player
+            player.setSize(16,16);
+            game.batch.draw(player.getAnimation().getKeyFrame(elapsedTime, true),
+                    player.getX(),
+                    player.getY(),
+                    16,
+                    16
+            );
+
+            // draw hearts on top corner of screen
+            for (int i = 0; i < player.getHearts().size(); i++) {
+                game.batch.draw(player.getHearts().get(i), camera.position.x - screenWidth / 2 + 9 + (9 * i),
+                        camera.position.y + screenHeight / 2 - 20);
+            }
+            //draw keys below hearts
+            for(int i = 0; i<player.getKeys().size();i++){
+                game.batch.draw(player.getKeys().get(i),camera.position.x-screenWidth/2+9+(9*i),
+                        camera.position.y+screenHeight/2-40);
+            }
+            if(devMode) {
+                // FPS counter
+                game.font.getData().setScale(0.25f);
+                game.font.draw(game.batch, "FPS: " + 1f / delta, camera.position.x + 120, camera.position.y + 86);
+                game.font.draw(game.batch,"Player Stats: ",camera.position.x-190,camera.position.y+86);
+                game.font.draw(game.batch,"CoolDown: "+player.getCoolDown(),camera.position.x-190,camera.position.y+76);
+                game.font.draw(game.batch,"ProjeTTK: "+player.getProjectileTTK(),camera.position.x-190,camera.position.y+66);
+                game.font.draw(game.batch,"Speed: "+player.getSpeed(),camera.position.x-190,camera.position.y+56);
+                game.font.draw(game.batch,"PrDMG: "+player.getProjectileDamage(),camera.position.x-190,camera.position.y+46);
+            }
+            game.batch.end();
+
+            // this renders bounding boxes on player and enemies
+            if (devMode) {
+                shapeRenderer.setProjectionMatrix(camera.combined);
+                shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+                shapeRenderer.setColor(0, 1, 0, 1);
+                shapeRenderer.rect(
+                        player.getBoundingRectangle().getX(),
+                        player.getBoundingRectangle().getY(),
+                        player.getBoundingRectangle().getWidth(),
+                        player.getBoundingRectangle().getHeight()
+                );
+                for (int i = 0; i < Entity.getEntities().size(); i++) {
+                    shapeRenderer.rect(
+                            Entity.getEntities().get(i).getBoundingRectangle().getX(),
+                            Entity.getEntities().get(i).getBoundingRectangle().getY(),
+                            Entity.getEntities().get(i).getBoundingRectangle().getWidth(),
+                            Entity.getEntities().get(i).getBoundingRectangle().getHeight()
+                    );
+                }
+                for(int i=0; i<projectiles.size();i++){
+                    shapeRenderer.rect(
+                            projectiles.get(i).getBoundingRectangle().getX(),
+                            projectiles.get(i).getBoundingRectangle().getY(),
+                            projectiles.get(i).getBoundingRectangle().getWidth(),
+                            projectiles.get(i).getBoundingRectangle().getHeight()
+                    );
+                }
+                shapeRenderer.end();
+            }
+
+            //1337
+            stage.act();
+            stage.draw();
+            return;
+        }
         /*
          * LOGIC SECTION RIGHT HERE BOYS
          */
@@ -316,7 +443,6 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
 
         // Set the sprite batch to render using the camera's coordinates
         game.batch.setProjectionMatrix(camera.combined);
-
         // Render the map (again using the camera)
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
@@ -409,6 +535,10 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
             }
             shapeRenderer.end();
         }
+
+        //1337
+        stage.act();
+        stage.draw();
     }
 
     // Win and Loss conditions
@@ -427,15 +557,6 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         dispose();
         player.dispose();
     }
-
-    // Some Projectile Methods
-    public void addProjectile(Projectile newProjectile){
-        projectiles.add(newProjectile);
-    }
-    public void removeProjectile(Projectile oldProjectile){
-        projectiles.remove(oldProjectile);
-    }
-
     /*
      * THINGS TO DO WITH TILED MAPS
      */
@@ -545,11 +666,19 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                                     (TiledMapTileLayer)tiledMap.getLayers().get(layerNum),this,
                                     new Vector2(x*layer.getTileWidth(),y*layer.getTileHeight())
                             );
+                        }else if(properties.containsKey("dialog")){
+                            dialogs.add(
+                            new DialogPopper(
+                                    layer.getCell(x,y).getTile().getProperties().get("dialog",String.class),
+                                    new Skin(Gdx.files.internal("ui/experimental/uiskin.json")),
+                                    x*16,
+                                    y*16,
+                                    layer,
+                                    new TextureAtlas(Gdx.files.internal("entities/dialogPopper/dialogPopper.pack")),
+                                    this
+                                    ));
                         }
                     }
-                    // key
-                    // lockedDoor
-                    // other enemies
                 }
             }
         }
@@ -559,6 +688,15 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
         if(game.soundEffects)
             resetJingle.play();
     }
+
+    // Projectile add and remove methods
+    public void addProjectile(Projectile newProjectile){
+        projectiles.add(newProjectile);
+    }
+    public void removeProjectile(Projectile oldProjectile){
+        projectiles.remove(oldProjectile);
+    }
+
     /*
      * INPUT LISTENERS
      */
@@ -612,15 +750,9 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                     Chest tempChest = (Chest)Entity.getEntities().get(i);
                     // are the player and chest colliding? if they are and also on the same level
                     // open the chest and give the player an item from it
-                    if(tempChest.getBoundingRectangle().overlaps(player.getBoundingRectangle())&&
-                            player.getCollisionLayer().equals(tempChest.getCollisionLayer())) {
-                        if(tempChest.openChest()>0)player.receiveRandomItem();
-                        // TODO comment out above line and replace with below line once powerups are in
-                        // player.giveItem(tempChest.openChest());
-                        // or maybe
-                        // player.givePowerUp(tempChest.openChest());
-                        // can the giveItem method take a String sometimes instead to give a specific item?
-                        // of course it can silly. This is Java(tm)
+                    if(tempChest.getBoundingRectangle().overlaps(player.getBoundingRectangle())
+                            && player.getCollisionLayer().equals(tempChest.getCollisionLayer())) {
+                        tempChest.openChest(player);
                     }
 
                 }
@@ -654,6 +786,20 @@ public class GameScreen implements Screen,GestureListener,InputProcessor {
                 }
             }
         }
+        if(player.isNextTo("dialog")){
+            for(int i=0;i<dialogs.size();i++){
+                if(player.getBoundingRectangle().overlaps(dialogs.get(i).getBoundingRectangle())
+                        &&player.getCollisionLayer().equals(dialogs.get(i).getLayer())
+                        && !dialogs.get(i).isLocked()){
+                    dialogs.get(i).popDialog().show(stage).setPosition(0,0);
+                }
+            }
+        }
+
+        // ask if it collides with our dialog container
+        // if it does then we display the text that is in the dialog
+        // in the setuptiledmap we will pass the text to our dialog container that it needs to say
+        // so we avoid having to find the correct tile to get its property
         return false;
     }
 

@@ -3,6 +3,7 @@ package com.liamhartery.pinch;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -16,7 +17,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 // Player
 // [*]TODO Get CC0 player image (size no longer matters, we've figured out setSize()
-// TODO more thinking about how pinching or zooming into void affects the game-play
 
 // Enemies
 // TODO make the enemies collide with the player and vice versa?
@@ -49,6 +49,13 @@ public class PinchGame extends Game {
 	public boolean soundEffects = true;
 	public float soundEffectVolume;
 	public Music musicFile;
+
+	// file handling stuff
+	public boolean isLocAvailable;
+	public String locRoot;
+
+	public int totalLevels = 3;
+
 	@Override
 	public void create () {
         batch = new SpriteBatch();
@@ -57,6 +64,15 @@ public class PinchGame extends Game {
 		adsController.hideBannerAd();
 		musicFile = Gdx.audio.newMusic(Gdx.files.internal("sound/music/music.mp3"));
 
+		isLocAvailable = Gdx.files.isLocalStorageAvailable();
+		if(isLocAvailable)
+			locRoot = Gdx.files.getLocalStoragePath();
+
+		// if we don't have a save file already then we make a new one
+		if(isLocAvailable&&!Gdx.files.local("pinchSave").exists()){
+			FileHandle file = Gdx.files.local("pinchSave");
+			file.writeString("1{t}2{f}3{f}4{f}5{f}",false);
+		}
 		// Change screens to the menu screen
 		this.setScreen(new com.liamhartery.pinch.screens.MainMenuScreen(this));
 		Gdx.input.setCatchBackKey(true);

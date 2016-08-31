@@ -3,6 +3,7 @@ package com.liamhartery.pinch.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -114,10 +115,16 @@ public class LevelSelectScreen extends Stage implements Screen {
         level2.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event,float x,float y){
-                new Dialog("Level 3",new Skin(Gdx.files.internal("ui/experimental/uiskin.json"))){
+                new Dialog("Level 2",new Skin(Gdx.files.internal("ui/experimental/uiskin.json"))){
                     {
-                        text("Sorry, level 2 is not yet available").setScale(Gdx.graphics.getWidth()/500);
-                        button("OK").setScale(Gdx.graphics.getWidth()/500);
+                        if(!isLevelAvailable(2)){
+                            text("Sorry, level 2 is locked right now. Beat level 1 first")
+                                    .setScale(Gdx.graphics.getWidth()/500);
+                            button("OK").setScale(Gdx.graphics.getWidth()/500);
+                        }else{
+                            text("Sorry, level 2 is not yet available").setScale(Gdx.graphics.getWidth()/500);
+                            button("OK").setScale(Gdx.graphics.getWidth()/500);
+                        }
                     }
                     @Override
                     public void result(Object object){
@@ -131,8 +138,14 @@ public class LevelSelectScreen extends Stage implements Screen {
             public void clicked(InputEvent event,float x,float y){
                 new Dialog("Level 3",new Skin(Gdx.files.internal("ui/experimental/uiskin.json"))){
                     {
-                        text("Sorry, level 3 is not yet available").setScale(Gdx.graphics.getWidth()/500);
-                        button("OK").setScale(Gdx.graphics.getWidth()/500);
+                        if(!isLevelAvailable(3)){
+                            text("Sorry, level 3 is locked right now. Beat level 2 first")
+                                    .setScale(Gdx.graphics.getWidth()/500);
+                            button("OK").setScale(Gdx.graphics.getWidth()/500);
+                        }else{
+                            text("Sorry, level 3 is not yet available").setScale(Gdx.graphics.getWidth()/500);
+                            button("OK").setScale(Gdx.graphics.getWidth()/500);
+                        }
                     }
                     @Override
                     public void result(Object object){
@@ -190,6 +203,14 @@ public class LevelSelectScreen extends Stage implements Screen {
         }
     }
 
+    public boolean isLevelAvailable(int level){
+        FileHandle file = Gdx.files.local("pinchSave");
+        if(game.isLocAvailable&&file.readString().charAt(level*4-2)=='f'){
+            return false;
+        }else{
+            return true;
+        }
+    }
     @Override
     public void resize(int width, int height) {
 

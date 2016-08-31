@@ -8,9 +8,11 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
+import com.liamhartery.pinch.items.CoolDownReduction;
 import com.liamhartery.pinch.items.HealthUp;
 import com.liamhartery.pinch.items.Item;
 import com.liamhartery.pinch.items.ProjectileDamageUp;
+import com.liamhartery.pinch.items.ProjectileSpeedUp;
 import com.liamhartery.pinch.items.ProjectileTTKUp;
 import com.liamhartery.pinch.screens.GameScreen;
 
@@ -78,9 +80,9 @@ public class Player extends Entity{
         setOriginCenter();
         // projectile variables!
         projectileDamage = 1;
-        projectileSpeed = 150;
+        projectileSpeed = 125;
         projectileTTK = 1;
-        coolDown = 0.4f;
+        coolDown = 0.5f;
 
     }
 
@@ -290,7 +292,7 @@ public class Player extends Entity{
     }
     // Receive a random buff/item
     public void receiveRandomItem(){
-        int randomInt = random.nextInt(3);
+        int randomInt = random.nextInt(4);
 
         // TODO add textures to a texture list to represent the items
         if(randomInt==0){
@@ -302,6 +304,8 @@ public class Player extends Entity{
         }else if(randomInt==2){
             //Gdx.app.log("Player got","TTK up");
             items.add(new ProjectileTTKUp(this));
+        }else if(randomInt==3){
+            items.add(new ProjectileSpeedUp(this));
         }
     }
     public void giveItem(String str){
@@ -311,6 +315,15 @@ public class Player extends Entity{
             items.add(new ProjectileTTKUp(this));
         }else if(str.equals("DMG")){
             items.add(new ProjectileDamageUp(this));
+        }else if(str.equals("SPD")){
+            items.add(new ProjectileSpeedUp(this));
+        }else if(str.equals("CDN")){
+            // if cooldown is already at 0 I don't want to cheat the player out of an item
+            if(coolDown<=0){
+                receiveRandomItem();
+                return;
+            }
+            items.add(new CoolDownReduction(this));
         }
     }
     public void giveKey(){
@@ -352,5 +365,9 @@ public class Player extends Entity{
     public void setProjectileDamage(int dmg){
         projectileDamage = dmg;
     }
+    public void setProjectileSpeed(int speed){projectileSpeed = speed;}
+    public int getProjectileSpeed(){return projectileSpeed;}
+    public float getProjectileCoolDown(){return coolDown;}
+    public void setProjectileCoolDown(float cd){coolDown=cd;}
     public float getElapsedTime(){return elapsedTime;}
 }

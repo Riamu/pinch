@@ -3,12 +3,14 @@ package com.liamhartery.pinch.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -18,7 +20,7 @@ import com.liamhartery.pinch.PinchGame;
 public class OptionScreen extends Stage implements Screen {
     private PinchGame game;
     private Stage stage;
-    private TextButton musicButton,effectsButton,back;
+    private TextButton musicButton,effectsButton,back,erase;
     private TextButton.TextButtonStyle textButtonStyle;
     private BitmapFont font;
     private Skin skin;
@@ -65,12 +67,15 @@ public class OptionScreen extends Stage implements Screen {
         musicButton = new TextButton("Music",textButtonStyle);
         effectsButton = new TextButton("Sound Effects",textButtonStyle);
         back = new TextButton("Back",textButtonStyle);
+        erase = new TextButton("Erase Game Data",textButtonStyle);
 
         table.add(musicButton).width(cellWidth).expandX().padBottom(padAmount);
         table.row();
         table.add(effectsButton).width(cellWidth).expandX().padBottom(padAmount);
         table.row();
         table.add(back).width(cellWidth).expandX().padBottom(padAmount);
+        table.row();
+        table.add(erase).width(cellWidth).expandX().padBottom(padAmount);
 
         stage.addActor(table);
         table.setFillParent(true);
@@ -115,6 +120,29 @@ public class OptionScreen extends Stage implements Screen {
                 dispose();
             }
         });
+        erase.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y){
+                new Dialog("Confirm",new Skin(Gdx.files.internal("ui/experimental/uiskin.json"))){
+                    {
+                        text("Are you sure? This action is irreversible")
+                                .setScale(Gdx.graphics.getWidth()/500);
+                        button("Yes","YES")
+                                .setScale(Gdx.graphics.getWidth()/500);
+                        button("No","NO")
+                                .setScale(Gdx.graphics.getWidth()/500);
+                    }
+                    @Override
+                    public void result(Object object){
+                        if(object.equals("YES")&&game.isLocAvailable){
+                            FileHandle file = Gdx.files.local("pinchSave");
+                            file.writeString("1{t}2{f}3{f}4{f}5{f}",false);
+                        }
+                        erase.setChecked(false);
+                    }
+                }.show(stage);
+            }
+        });
     }
 
     @Override
@@ -131,6 +159,7 @@ public class OptionScreen extends Stage implements Screen {
         camera.update();
 
         stage.draw();
+        stage.act();
         if(Gdx.input.isKeyPressed(Input.Keys.BACK)){
             game.setScreen(new ButtonScreen(game));
             game.font.getData().setScale(0.5f);

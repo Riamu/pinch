@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -547,10 +548,35 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
             dispose();
             game.setScreen(new GameScreen(game,currentLevelDir,currentLevelNum+1,player));
         }else {
+            // this is where we win the whole level not just the stage
+            // set the WinScreen
             game.setScreen(new WinScreen(game, game.timer));
+            // check if Local Dir is available
+            if(game.isLocAvailable){
+                // check if the pinchSave file exists
+                if(Gdx.files.local("pinchSave").exists()){
+                    // we get a FileHandle for the pinchSave file
+                    FileHandle file = Gdx.files.local("pinchSave");
+                    // we have our writeString set to the readString for some reason
+                    String readString = file.readString();
+                    String writeString = new String(readString);
+
+                    // find the place where the next level from the current one is, make it unlocked
+                    for(int i=0;i<readString.length();i++){
+                        if(i==currentLevelDir*4){
+                            char[] charArray = writeString.toCharArray();
+                            charArray[i+2]='t';
+                            writeString = new String(charArray);
+                        }
+                    }
+                    // write our writeString to file, overwrite previous thing
+                    file.writeString(writeString,false);
+                }
+            }
             dispose();
             player.dispose();
         }
+
     }
     public void lose(){
         game.setScreen(new LoseScreen(game));

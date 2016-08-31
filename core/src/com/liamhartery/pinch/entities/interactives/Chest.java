@@ -31,9 +31,11 @@ public class Chest extends Entity {
         dialog = new Dialog("Chest",new Skin(Gdx.files.internal("ui/experimental/uiskin.json"))){
             {
                 text("Choose an Item");
-                button("Potion","POT");
-                button("Damage","DMG");
-                button("TTK","TTK");
+                button("Health \nPotion","POT");
+                button("Projectile \nDamage","DMG");
+                button("Projectile \nTime","TTK");
+                button("Projectile \nSpeed","SPD");
+                button("Attack \nCool Down","CDN");
             }
             @Override
             public void result(Object object){
@@ -43,6 +45,10 @@ public class Chest extends Entity {
                     player.giveItem("DMG");
                 } else if (object.equals("TTK")) {
                     player.giveItem("TTK");
+                } else if (object.equals("")) {
+                    player.giveItem("SPD");
+                }else if (object.equals("CDN")){
+                    player.giveItem("CDN");
                 }
             }
         };
@@ -52,7 +58,7 @@ public class Chest extends Entity {
             setAnimation(open);
             if((getGame().game.soundEffects)){
                 chestOpen.play();
-                dialog.setScale(Gdx.graphics.getWidth()/400);
+                dialog.setScale(Gdx.graphics.getWidth()/500);
                 dialog.show(getGame().stage);
                 dialog.setPosition(0,0);
                 this.player = player;

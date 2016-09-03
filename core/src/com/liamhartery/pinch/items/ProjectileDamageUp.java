@@ -8,6 +8,7 @@ public class ProjectileDamageUp extends Item{
     public ProjectileDamageUp(Player player){
         super(player);
         player.setProjectileDamage(player.getProjectileDamage()+1);
+        player.setTempDamage(player.getTempDamage()+1);
 
     }
     public Texture getTexture(){

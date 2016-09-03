@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.RandomXS128;
 import com.badlogic.gdx.math.Vector2;
+
 import com.liamhartery.pinch.items.CoolDownReduction;
 import com.liamhartery.pinch.items.HealthUp;
 import com.liamhartery.pinch.items.Item;
@@ -49,6 +50,13 @@ public class Player extends Entity{
     private int projectileSpeed;
     private float projectileTTK;
 
+    // powerups for current stage only
+    private float tempCD;
+    private int tempDamage;
+    private int tempSpeed;
+    private float tempTTK;
+    private int tempMaxHP;
+
     // items stuff
     private ArrayList<Item> items = new ArrayList<Item>();
     RandomXS128 random = new RandomXS128();
@@ -58,7 +66,8 @@ public class Player extends Entity{
             (Gdx.files.internal("sound/effects/keys-rattle-03.wav"));
     private Sound hitSound = Gdx.audio.newSound
             (Gdx.files.internal("sound/effects/hitSound.mp3"));
-
+    private Sound swooshSound = Gdx.audio.newSound(
+            Gdx.files.internal("sound/effects/projectileSwoosh.wav"));
     private float elapsedTime = 0;
 
     public Player(TextureAtlas atlas, TiledMapTileLayer layer,
@@ -93,6 +102,7 @@ public class Player extends Entity{
         key.dispose();
         keySound.dispose();
         hitSound.dispose();
+        swooshSound.dispose();
         super.dispose();
     }
     public void update(float x, float y, float delta){
@@ -289,6 +299,8 @@ public class Player extends Entity{
                 projectileTTK,
                 this
         ));
+        if(getGame().game.soundEffects)
+            swooshSound.play(0.5f);
     }
     // Receive a random buff/item
     public void receiveRandomItem(){
@@ -370,4 +382,48 @@ public class Player extends Entity{
     public float getProjectileCoolDown(){return coolDown;}
     public void setProjectileCoolDown(float cd){coolDown=cd;}
     public float getElapsedTime(){return elapsedTime;}
+
+
+    public void resetStage(){
+        loseAllKeys();
+        projectileSpeed-=tempSpeed;
+        setProjectileCoolDown(getProjectileCoolDown()-tempCD);
+        projectileDamage-=tempDamage;
+        setMaxHealth(getMaxHealth()-tempMaxHP);
+        setHealth(getMaxHealth());
+        hearts.clear();
+        projectileTTK-=tempTTK;
+        updateHearts();
+        Gdx.app.log("Player Health",""+getMaxHealth());
+
+        tempSpeed = 0;
+        tempCD = 0;
+        tempDamage = 0;
+        tempMaxHP = 0;
+        tempTTK = 0;
+    }
+    public void stagePassed(){
+        tempCD = 0;
+        tempMaxHP = 0;
+        tempSpeed = 0;
+        tempTTK = 0;
+        tempDamage = 0;
+    }
+    // temp stage updoots
+    // temp speed
+    public int getTempSpeed(){return tempSpeed;}
+    public void setTempSpeed(int speed){tempSpeed = speed;}
+    // temp CD
+    public float getTempCD(){return tempCD;}
+    public void setTempCD(float CD){tempCD = CD;}
+    // tempDamage
+    public int getTempDamage(){return tempDamage;}
+    public void setTempDamage(int dmg){tempDamage=dmg;}
+    // temp Max HP
+    public int getTempMaxHP(){return tempMaxHP;}
+    public void setTempMaxHP(int HP){tempMaxHP=HP;}
+    // temp TTK
+    public float getTempTTK(){return tempTTK;}
+    public void setTempTTK(float TTK){tempTTK=TTK;}
+
 }

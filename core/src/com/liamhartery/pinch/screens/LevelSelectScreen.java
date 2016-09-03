@@ -122,8 +122,9 @@ public class LevelSelectScreen extends Stage implements Screen {
                                     .setScale(Gdx.graphics.getWidth()/500);
                             button("OK").setScale(Gdx.graphics.getWidth()/500);
                         }else{
-                            text("Sorry, level 2 is not yet available").setScale(Gdx.graphics.getWidth()/500);
-                            button("OK").setScale(Gdx.graphics.getWidth()/500);
+                            game.setScreen(new GameScreen(game,2,1));
+                            game.font.getData().setScale(0.5f);
+                            dispose();
                         }
                     }
                     @Override
@@ -143,8 +144,9 @@ public class LevelSelectScreen extends Stage implements Screen {
                                     .setScale(Gdx.graphics.getWidth()/500);
                             button("OK").setScale(Gdx.graphics.getWidth()/500);
                         }else{
-                            text("Sorry, level 3 is not yet available").setScale(Gdx.graphics.getWidth()/500);
-                            button("OK").setScale(Gdx.graphics.getWidth()/500);
+                            game.setScreen(new GameScreen(game,3,1));
+                            game.font.getData().setScale(0.5f);
+                            dispose();
                         }
                     }
                     @Override

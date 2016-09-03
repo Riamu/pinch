@@ -13,6 +13,7 @@ public class HealthUp extends Item{
     public HealthUp(Player player){
         super(player);
         player.setMaxHealth(player.getMaxHealth()+1);
+        player.setTempMaxHP(player.getTempMaxHP()+1);
         player.setHealth(player.getMaxHealth());
         player.updateHearts();
     }

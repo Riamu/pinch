@@ -56,8 +56,7 @@ public class Projectile extends Sprite{
     private Sound enemyHitSound = Gdx.audio.newSound(
             Gdx.files.internal("sound/effects/enemyHitSound.mp3"));
 
-    private Sound swooshSound = Gdx.audio.newSound(
-            Gdx.files.internal("sound/effects/projectileSwoosh.mp3"));
+
     //private Player player;
 
     private GameScreen game;
@@ -88,7 +87,6 @@ public class Projectile extends Sprite{
                 textureAtlas.findRegion("projectile7"),
                 textureAtlas.findRegion("projectile8")
         );
-        swooshSound.play();
     }
 
     // currently projectiles don't actually check if they're on the current layer
@@ -123,7 +121,6 @@ public class Projectile extends Sprite{
         game.removeProjectile(this);
         textureAtlas.dispose();
         enemyHitSound.dispose();
-        swooshSound.dispose();
     }
 
     // currently checks every single sprite for bounding rectangle collision

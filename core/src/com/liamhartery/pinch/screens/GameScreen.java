@@ -98,6 +98,8 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
             Entity.getEntities().get(i).dispose();
         }
         Entity.getEntities().clear();
+        projectiles.clear();
+        dialogs.clear();
         resetJingle.dispose();
         stage.dispose();
     }
@@ -188,7 +190,6 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
         setUpTiledMap();
 
         // make sure everything with our player is peachy, and then transfer ownership of him
-        player.setMaxHealth(player.getMaxHealth()+1);
         player.setHealth(player.getMaxHealth());
         player.updateHearts();
         player.setGameScreen(this);
@@ -346,8 +347,6 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
         if(delta>1/15f){
             delta=1/60f;
         }
-        // check if the invulnerability timer is over our specified amount of (1)
-        // TODO make increased invulnerability times a powerup
         if (invulTimer > 1) {
             player.setInvulnerable(false);
             invulTimer = 0;
@@ -545,7 +544,8 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
     // Win and Loss conditions
     public void win(){
         if(currentLevelNum<5){
-            dispose();
+            this.dispose();
+            player.stagePassed();
             game.setScreen(new GameScreen(game,currentLevelDir,currentLevelNum+1,player));
         }else {
             // this is where we win the whole level not just the stage
@@ -610,7 +610,7 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
                 tiledMap.getLayers().get(currentLayer-2).setVisible(true);
                 player.updateLayer((TiledMapTileLayer) tiledMap.getLayers().get(currentLayer));
                 if(player.isOnTile("void")||player.isOnTile("blocked")){
-                    player.kill();
+                    //player.kill();
                     resetLevel();
                 }
             }
@@ -624,7 +624,7 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
                 tiledMap.getLayers().get(currentLayer-2).setVisible(true);
                 player.updateLayer((TiledMapTileLayer) tiledMap.getLayers().get(currentLayer));
                 if(player.isOnTile("void")||player.isOnTile("blocked")){
-                    player.kill();
+                    //player.kill();
                     resetLevel();
                 }
             }
@@ -710,7 +710,10 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
         }
     }
     public void resetLevel(){
-        game.setScreen(new GameScreen(game,currentLevelDir,currentLevelNum));
+        this.dispose();
+        player.resetStage();
+        game.setScreen(new GameScreen(game,currentLevelDir,currentLevelNum,player));
+        //player.dispose();
         if(game.soundEffects)
             resetJingle.play();
     }
@@ -867,6 +870,9 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
     // sets the distance for a pinch
     @Override
     public boolean zoom(float initialDistance, float distance) {
+        if(isPaused){
+            return true;
+        }
         pinchDistance = initialDistance-distance;
         return true;
     }

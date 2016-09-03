@@ -13,7 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // [*]TODO At least 15 levels for release (not including tutorial levels) (5/15)
 // [*]TODO Icons for power-ups ??? Necessary now?
 // TODO make the little "which floor am I on?" icon
-
+// [*]TODO make current stage's upgrades temporary, and make them perm at the end of the stage.
 
 // Player
 // [*]TODO Get CC0 player image (size no longer matters, we've figured out setSize()
@@ -34,6 +34,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // Update other version numbers in build.gradle
 // ensure devmode is off
 // ensure the proper ad unit ID is selected
+
+// Changed how doing a wrong pinch/zoom works. You now keep all updoots from previous stages just
+// not the current one
 
 public class PinchGame extends Game {
 	public SpriteBatch batch;

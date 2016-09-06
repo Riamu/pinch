@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -83,8 +82,6 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
     private Vector2 playerPos;
 
     public Stage stage;
-    private Sound resetJingle = Gdx.audio.newSound(
-            Gdx.files.internal("sound/effects/resetJingle.mp3"));
 
     private ArrayList<DialogPopper> dialogs;
     // dispose any resource that needs disposing of
@@ -100,7 +97,6 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
         Entity.getEntities().clear();
         projectiles.clear();
         dialogs.clear();
-        resetJingle.dispose();
         stage.dispose();
     }
 
@@ -219,8 +215,11 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
 
         // this fixes the bug where when you start the next level the collision map is wrong
         // no idea why that happens yet but TODO remove these when bug is fixed
+        // Update: bug is never gonna be fixed whatever
+        changeFloor(1);
         changeFloor(-1);
         changeFloor(1);
+        changeFloor(-1);
     }
 
     @Override
@@ -714,8 +713,6 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
         player.resetStage();
         game.setScreen(new GameScreen(game,currentLevelDir,currentLevelNum,player));
         //player.dispose();
-        if(game.soundEffects)
-            resetJingle.play();
     }
 
     // Projectile add and remove methods

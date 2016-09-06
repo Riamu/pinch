@@ -63,7 +63,7 @@ public class MainMenuScreen implements Screen, GestureDetector.GestureListener{
         game.batch.begin();
             game.bigfont.draw(game.batch, "p i n c h",(screenWidth-bigWidth)/2,280);
             game.font.draw(game.batch,"Tap to Begin",(screenWidth-lilWidth)/2,150);
-            game.font.draw(game.batch,"Version 0.3.0",650,450);
+            game.font.draw(game.batch,"Version 0.5.0",650,450);
         game.batch.end();
         if(Gdx.input.isKeyPressed(Input.Keys.BACK)){
             dispose();

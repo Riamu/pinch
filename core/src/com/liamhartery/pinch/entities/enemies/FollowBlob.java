@@ -20,7 +20,7 @@ import com.liamhartery.pinch.screens.GameScreen;
 
 public class FollowBlob extends Entity{
     private int hp = 1;
-    private int speed = 25;
+    private int speed = 50;
     private int damage = 1;
 
     private RandomXS128 random = new RandomXS128();

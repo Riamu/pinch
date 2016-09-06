@@ -10,10 +10,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // URGENT is marked with [*]
 
 // General
-// [*]TODO At least 15 levels for release (not including tutorial levels) (5/15)
+// [*]TODO At least 15 levels for release (not including tutorial levels) (10/15)
 // [*]TODO Icons for power-ups ??? Necessary now?
 // TODO make the little "which floor am I on?" icon
-// [*]TODO make current stage's upgrades temporary, and make them perm at the end of the stage.
 
 // Player
 // [*]TODO Get CC0 player image (size no longer matters, we've figured out setSize()
@@ -27,7 +26,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // can sometimes clip out of the confines of the map
 // pressing back while on the ButtonScreen quits out of the app.
 // enemies don't collide with: doors,chests,enemies
-// Dialogs are weird sizes
 
 // RELEASE CHECKLIST
 // Update version code in manifest
@@ -35,8 +33,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // ensure devmode is off
 // ensure the proper ad unit ID is selected
 
-// Changed how doing a wrong pinch/zoom works. You now keep all updoots from previous stages just
-// not the current one
 
 public class PinchGame extends Game {
 	public SpriteBatch batch;

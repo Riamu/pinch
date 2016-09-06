@@ -68,6 +68,9 @@ public class Player extends Entity{
             (Gdx.files.internal("sound/effects/hitSound.mp3"));
     private Sound swooshSound = Gdx.audio.newSound(
             Gdx.files.internal("sound/effects/projectileSwoosh.wav"));
+    private Sound resetJingle = Gdx.audio.newSound(
+            Gdx.files.internal("sound/effects/resetJingle.mp3"));
+
     private float elapsedTime = 0;
 
     public Player(TextureAtlas atlas, TiledMapTileLayer layer,
@@ -103,6 +106,7 @@ public class Player extends Entity{
         keySound.dispose();
         hitSound.dispose();
         swooshSound.dispose();
+        resetJingle.dispose();
         super.dispose();
     }
     public void update(float x, float y, float delta){
@@ -394,13 +398,14 @@ public class Player extends Entity{
         hearts.clear();
         projectileTTK-=tempTTK;
         updateHearts();
-        Gdx.app.log("Player Health",""+getMaxHealth());
 
         tempSpeed = 0;
         tempCD = 0;
         tempDamage = 0;
         tempMaxHP = 0;
         tempTTK = 0;
+        if(getGame().game.soundEffects)
+            resetJingle.play();
     }
     public void stagePassed(){
         tempCD = 0;
@@ -408,6 +413,7 @@ public class Player extends Entity{
         tempSpeed = 0;
         tempTTK = 0;
         tempDamage = 0;
+        setMaxHealth(getMaxHealth()+1);
     }
     // temp stage updoots
     // temp speed

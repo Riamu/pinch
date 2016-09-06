@@ -40,7 +40,7 @@ public class DialogPopper extends Entity {
 
     public Dialog popDialog(){
         return
-        new Dialog("Tutorial",skin){
+        new Dialog("Help",skin){
             {
                 text(dialogText).setScale(Gdx.graphics.getWidth()/500,Gdx.graphics.getHeight()/281);
                 button("OK").setScale(Gdx.graphics.getWidth()/500,Gdx.graphics.getHeight()/281);

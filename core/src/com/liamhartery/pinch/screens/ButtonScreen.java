@@ -80,7 +80,7 @@ public class ButtonScreen extends Stage implements Screen {
         table.row();
         table.add(back).width(cellWidth).expandX().padBottom(padAmount);
         table.row();
-        table.add(quitButton).width(cellWidth).expandX().padBottom(padAmount);
+        //table.add(quitButton).width(cellWidth).expandX().padBottom(padAmount);
 
         table.setX(0);
         table.setY(0);

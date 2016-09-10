@@ -10,8 +10,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // URGENT is marked with [*]
 
 // General
-// [*]TODO At least 15 levels for release (not including tutorial levels) (10/15)
+// [*]TODO At least 15 levels for release (not including tutorial levels) (11/15)
 // [*]TODO Icons for power-ups ??? Necessary now?
+// [*]TODO Back button brings up menu dialog
 // TODO make the little "which floor am I on?" icon
 
 // Player

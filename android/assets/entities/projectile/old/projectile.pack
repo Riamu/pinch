@@ -5,63 +5,63 @@ filter: Nearest,Nearest
 repeat: none
 projectile0
   rotate: false
-  xy: 1, 1
+  xy: 2, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 projectile1
   rotate: false
-  xy: 19, 1
+  xy: 20, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 projectile2
   rotate: false
-  xy: 37, 1
+  xy: 38, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 projectile3
   rotate: false
-  xy: 55, 1
+  xy: 38, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 projectile4
   rotate: false
-  xy: 73, 1
+  xy: 56, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 projectile5
   rotate: false
-  xy: 91, 1
+  xy: 74, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 projectile6
   rotate: false
-  xy: 109, 1
+  xy: 92, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 projectile7
   rotate: false
-  xy: 127, 1
+  xy: 110, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 projectile8
   rotate: false
-  xy: 145, 1
+  xy: 128, 2
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

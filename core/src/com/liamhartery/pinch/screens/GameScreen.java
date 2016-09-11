@@ -21,6 +21,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.liamhartery.pinch.PinchGame;
 import com.liamhartery.pinch.entities.enemies.ArmouredBlob;
@@ -224,7 +225,27 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
 
     @Override
     public void render(float delta) {
-
+        if(Gdx.input.isKeyPressed(Input.Keys.BACK)){
+            new Dialog("Pause Menu",new Skin(Gdx.files.internal("ui/experimental/uiskin.json"))){
+                {
+                    text("Please note that if you return to menu \nyou will lose all current progress.");
+                    button("Menu","MENU");
+                    button("Continue","CONTINUE");
+                    isPaused=true;
+                    setScale(Gdx.graphics.getWidth()/500);
+                }
+                @Override
+                public void result(Object object){
+                    if(object.equals("MENU")){
+                        game.setScreen(new ButtonScreen(game));
+                        isPaused=false;
+                        dispose();
+                    }else{
+                        isPaused=false;
+                    }
+                }
+            }.show(stage);
+        }
         if(isPaused){
             Gdx.gl.glClearColor(33 / 255f, 30 / 255f, 39 / 255f, 0);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -739,6 +760,9 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
     // this will be used to attack
     @Override
     public boolean fling(float velocityX, float velocityY, int button) {
+        if(isPaused){
+            return false;
+        }
         // if a pinch just stopped then we don't want to attack
         if(pinchJustStopped){
             return false;
@@ -765,6 +789,9 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
     // items soon
     @Override
     public boolean tap(float x, float y, int count, int button) {
+        if(isPaused){
+            return false;
+        }
         if(player.isNextTo("win"))win();
         // we check if the player is next to any of the following
         if(player.isNextTo("chest")){
@@ -877,6 +904,9 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
     // calls the changeFloor method with the distance determined in the zoom method
     @Override
     public void pinchStop(){
+        if(isPaused){
+            return;
+        }
         changeFloor(pinchDistance);
         pinchJustStopped = true;
     }

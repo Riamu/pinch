@@ -310,7 +310,6 @@ public class Player extends Entity{
     public void receiveRandomItem(){
         int randomInt = random.nextInt(4);
 
-        // TODO add textures to a texture list to represent the items
         if(randomInt==0){
             //Gdx.app.log("Player got","Health up");
             items.add(new HealthUp(this));

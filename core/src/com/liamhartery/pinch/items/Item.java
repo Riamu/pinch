@@ -3,8 +3,6 @@ package com.liamhartery.pinch.items;
 import com.badlogic.gdx.graphics.Texture;
 import com.liamhartery.pinch.entities.Player;
 
-// TODO add textures to the powerUps
-
 public abstract class Item  {
     private Texture texture;
 

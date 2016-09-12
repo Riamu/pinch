@@ -246,6 +246,10 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
                 }
             }.show(stage);
         }
+
+        /*
+         * PAUSED RENDER SECTION
+         */
         if(isPaused){
             Gdx.gl.glClearColor(33 / 255f, 30 / 255f, 39 / 255f, 0);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -398,6 +402,14 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
                     }
                     player.setInvulnerable(true);
                 }
+                if(Entity.getEntities().get(i)instanceof Key){
+                    Key tempKey = (Key)Entity.getEntities().get(i);
+                    if(tempKey.getBoundingRectangle().overlaps(player.getBoundingRectangle())
+                            &&player.getCollisionLayer().equals(tempKey.getCollisionLayer())){
+                        tempKey.playerGotMe();
+                        player.giveKey();
+                    }
+                }
             }
         }
         // Update all projectiles
@@ -524,6 +536,9 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
             game.font.draw(game.batch,"Speed: "+player.getSpeed(),camera.position.x-190,camera.position.y+56);
             game.font.draw(game.batch,"PrDMG: "+player.getProjectileDamage(),camera.position.x-190,camera.position.y+46);
         }
+
+        game.batch.draw(player.getIndicator().getKeyFrame(elapsedTime,true),camera.position.x+screenWidth/2-24,camera.position.y+screenHeight/2-40);
+
         game.batch.end();
 
         // this renders bounding boxes on player and enemies
@@ -649,6 +664,7 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
                 }
             }
         }
+        player.update(player.getPosition().x,player.getPosition().y,0);
     }
 
     // put anything that's in the tiledMap that needs a sprite in here
@@ -811,6 +827,8 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
                 }
             }
         }
+        // isNextTo("key") removed in favour of checking every update cycle
+        /*
         if(player.isNextTo("key")){
             for(int i=0;i<Entity.getEntities().size();i++){
                 if(Entity.getEntities().get(i)instanceof Key){
@@ -823,6 +841,7 @@ public class GameScreen extends Stage implements Screen,GestureListener,InputPro
                 }
             }
         }
+        */
         if(player.isNextTo("door")){
             for(int i=0;i<Entity.getEntities().size();i++){
                 if(Entity.getEntities().get(i) instanceof Door){

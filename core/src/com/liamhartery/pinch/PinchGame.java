@@ -10,8 +10,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 // URGENT is marked with [*]
 
 // General
-// [*]TODO At least 15 levels for release (not including tutorial levels) (14/15)
-// [*]TODO make the little "which floor am I on?" icon
 
 // Player
 // TODO Get CC0 player image (size no longer matters, we've figured out setSize())

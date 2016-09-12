@@ -24,6 +24,7 @@ public class Player extends Entity{
     private Texture heartTexture = new Texture(Gdx.files.internal("icons/fullheart.png"));
     private Texture emptyHeartTexture = new Texture(Gdx.files.internal("icons/emptyheart.png"));
     private Texture key = new Texture(Gdx.files.internal("entities/key/key_icon.png"));
+    private TextureAtlas indicatorAtlas = new TextureAtlas(Gdx.files.internal("ui/indicator.pack"));
     private ArrayList<Texture> hearts;
     private ArrayList<Texture> keys;
 
@@ -38,6 +39,12 @@ public class Player extends Entity{
     private Animation leftAnimation;
     private Animation rightAnimation;
     private Animation idleAnimation;
+
+    private Animation indicator;
+    private Animation indicator0;
+    private Animation indicator1;
+    private Animation indicator2;
+
     private Animation teleportUpAnimation;
     private Animation teleportDownAnimation;
 
@@ -143,6 +150,14 @@ public class Player extends Entity{
         setX(getPosition().x);
         setY(getPosition().y);
         //updateHearts(); // I don't think this needs to be done
+
+        if(getCollisionLayer().getName().equals("Collision0")){
+            indicator = indicator0;
+        }else if(getCollisionLayer().getName().equals("Collision1")){
+            indicator = indicator1;
+        }else if(getCollisionLayer().getName().equals("Collision2")){
+            indicator = indicator2;
+        }
     }
 
     public void animationSetup(){
@@ -179,6 +194,12 @@ public class Player extends Entity{
         );
         // by default our animation is idle of course
         animation = idleAnimation;
+
+        // Indicator animations
+        indicator0 = new Animation(0f, indicatorAtlas.findRegion("indicator0"));
+        indicator1 = new Animation(0f, indicatorAtlas.findRegion("indicator1"));
+        indicator2 = new Animation(0f, indicatorAtlas.findRegion("indicator2"));
+        indicator = indicator1;
     }
     // called whenever the player moves
     // basically just calls animation = (whatever animation corresponds to direction)
@@ -431,4 +452,5 @@ public class Player extends Entity{
     public float getTempTTK(){return tempTTK;}
     public void setTempTTK(float TTK){tempTTK=TTK;}
 
+    public Animation getIndicator(){return indicator;}
 }

@@ -1,6 +1,5 @@
 #Pinch
-  Pinch is a dungeon-crawler, puzzle-solver with roguelike elements for Android, PC, and iOS 
-  (technically only the Android version is being released at this time)
+  Pinch is a dungeon-crawler, puzzle-solver with roguelike elements for Android.
 ##Where can I get this awesome game?
   Good question friend! Right here: https://play.google.com/store/apps/details?id=com.liamhartery.pinch
 ##About
